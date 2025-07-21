@@ -1,7 +1,6 @@
-# DirectXProgrammingPractice
-Practice creating a custom engine by learning how to use DirectX.
+# GameEngine_Programming
+Practice GrapicsProgramming/DirectX/WindowsApi/GameEngine
+and make my own Game Engine
 
-DirectX12 Referance : 
-Following DirectX book "Introduction to 3D Game Programming with DirectX 12"
-All of need codes are in this book.
-
+DirectX12 Practice Reference : Introduction to 3D Game Programming with DirectX 12
+Other Reference : lots of lectures
