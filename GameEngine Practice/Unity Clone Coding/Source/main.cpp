@@ -108,6 +108,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr); 
 
+  //2개 이상 윈도우 생성 가능
+  // HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+  //     CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+
    if (!hWnd)
    {
       return FALSE;
@@ -154,6 +158,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
+
+        HBRUSH br = CreateSolidBrush(RGB(255, 0, 255)); // 브러쉬 생성(어떤 브러쉬가 그림이 그려질지)
+        HBRUSH oldbr = (HBRUSH)SelectObject(hdc, br); // hdc에게 브러쉬 대입 이후 오래된(이전에) 브러쉬 리턴
+
+        Rectangle(hdc, 100, 100, 200, 200); // 사각형 그리는 함수
+
+        (HBRUSH)SelectObject(hdc, oldbr); // 오래된 브러쉬로 돌려놓기
+        DeleteObject(br); // 생성된 브러쉬를 제거
+
+        HPEN p = CreatePen(PS_SOLID, 10,  RGB(255, 0, 0)); // 같은 원리를 펜에 적용
+        HPEN oldp = (HPEN)SelectObject(hdc, p);
+
+        Ellipse(hdc, 200, 300, 500, 700);
+
+        (HBRUSH)SelectObject(hdc, oldp);
+
+        DeleteObject(p);
+        // DC = 화면 출력에 필요한 모든 데이터를 가지는 구조체
+        // GDI 모듈에 의해 관리
         // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
         EndPaint(hWnd, &ps);
         break;
