@@ -1,4 +1,5 @@
 #include "PEInput.h"
+#include "PETime.h"
 
 namespace PracticeEngine
 {

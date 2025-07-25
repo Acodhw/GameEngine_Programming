@@ -10,7 +10,7 @@ namespace PracticeEngine
 		GameObject();
 		~GameObject();
 
-		void Update();
+		void Update(); // 게임 오브젝트마다 각각의 업데이트/늦은업데이트/렌더를 가지게 한다
 		void LateUpdate();
 		void Render(HDC hdc);
 
@@ -24,6 +24,8 @@ namespace PracticeEngine
 		float GetPositionY() { return my; }
 		
 	private:
+		float speed = 500;
+
 		// 게임 오브젝트의 좌표
 		float mx;
 		float my;

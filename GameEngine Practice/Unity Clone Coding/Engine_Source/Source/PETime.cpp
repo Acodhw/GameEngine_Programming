@@ -1,4 +1,5 @@
 #include "PETime.h"
+#include <WinUser.h>
 
 namespace PracticeEngine {
 	LARGE_INTEGER Time::cpuFrequency = {};

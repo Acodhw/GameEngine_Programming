@@ -1,4 +1,6 @@
 #include "PEGameObject.h"
+#include "PEInput.h"
+#include "PETime.h"
 
 namespace PracticeEngine
 {
@@ -12,25 +14,25 @@ namespace PracticeEngine
 	}
 
 	void GameObject::Update() {
-		if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
-			mx -= 0.01f;
+		if (Input::GetKey(eKeyCode::A) || Input::GetKey(eKeyCode::Left)) {
+			mx -= speed * Time::DeltaTime;
 		}
-		if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
-			mx += 0.01f;
+		if (Input::GetKey(eKeyCode::D) || Input::GetKey(eKeyCode::Right)) {
+			mx += speed * Time::DeltaTime;
 		}
-		if (GetAsyncKeyState(VK_UP) & 0x8000) {
-			my -= 0.01f;
+		if (Input::GetKey(eKeyCode::W) || Input::GetKey(eKeyCode::Up)) {
+			my -= speed * Time::DeltaTime;
 		}
-		if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
-			my += 0.01f;
-		}
+		if (Input::GetKey(eKeyCode::S) || Input::GetKey(eKeyCode::Down)) {
+			my += speed * Time::DeltaTime;
+		} // 키 처리
 	}
 
 	void GameObject::LateUpdate() {
 
 	}
 
-	void GameObject::Render(HDC hdc) {
+	void GameObject::Render(HDC hdc) { // 게임 오브젝트가 할당된 렌더링을 처리
 		HBRUSH br = CreateSolidBrush(RGB(255, 0, 255)); // 브러쉬 생성(어떤 브러쉬가 그림이 그려질지)
 		HBRUSH oldbr = (HBRUSH)SelectObject(hdc, br); // hdc에게 브러쉬 대입 이후 오래된(이전에) 브러쉬 리턴
 

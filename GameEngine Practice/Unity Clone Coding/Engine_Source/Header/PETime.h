@@ -8,6 +8,7 @@ namespace PracticeEngine {
 	public:
 		static void Initailze();
 		static void Update();
+		static void Render(HWND hwmd);
 
 		static const float& DeltaTime;
 
