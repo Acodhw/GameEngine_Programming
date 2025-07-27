@@ -30,10 +30,8 @@ namespace PracticeEngine {
 		UINT mHeight;
 
 		wchar_t* title; // 타이틀 저장
-
-		// 플레이어
-		GameObject mPlayer; // 게임오브젝트 연동
 		
+		//std::vector<Scene*> mScene;
 	};
 }
 

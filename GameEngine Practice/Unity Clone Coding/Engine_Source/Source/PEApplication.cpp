@@ -1,6 +1,7 @@
 #include "PEApplication.h"
 #include "PEInput.h"
 #include "PETime.h"
+#include "PESceneManager.h"
 
 #define MAX_LOADSTRING 100
 
@@ -43,37 +44,38 @@ namespace PracticeEngine {
 
 		HBITMAP oldBitmap = (HBITMAP)SelectObject(mBackHDC, mBackBuffer); // Buffer에다가 DC 바꿔주고
 		DeleteObject(oldBitmap); // 이전 DC는 삭제
-
-		mPlayer.SetPosition(0, 0);
+		
 		Input::Initailze();
 		Time::Initailze();
+		SceneManager::Initialize();
 	}
 
 	void Application::Run() {
 		Update();
 		LateUpdate();
 		Render();
-		InfoTitle();
+
 	}
 
 	void Application::Update() {
 		Time::Update(); // 시간 처리를 맨 앞에서
 		Input::Update(); // 키 처리를 플레이어 처리보다 빠르게
-		mPlayer.Update();
+		SceneManager::Update();
+		
+
 	}
 	
 	void Application::LateUpdate() {
-		mPlayer.LateUpdate();
+		SceneManager::LateUpdate();
 	}
 
 	void Application::Render() {
 		Rectangle(mBackHDC, -5, -5, mWidth + 5, mHeight + 5);
-
-
-		mPlayer.Render(mBackHDC);
+		SceneManager::Render(mBackHDC);
 
 		// BackBuffer를 원본  Buffer에 복사
 		BitBlt(mHdc, 0, 0, mWidth, mHeight, mBackHDC, 0, 0, SRCCOPY); 
+		infoTitle();
 	}
 
 	void Application::infoTitle() {
