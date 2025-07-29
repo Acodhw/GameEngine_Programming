@@ -4,6 +4,15 @@
 #include "framework.h"
 #include "EnginePractice.h"
 
+//#pragma comment(lib, "..\\x64\\Debug\\PracticeEngine_Window.lib")
+#include "..\\PracticeEngine_SOURCE\\PEApplication.h"
+#include "..\\PracticeEngine_Window\\PELoadScene.h"
+
+PracticeEngine::Application application;
+
+ULONG_PTR gpToken;
+Gdiplus::GdiplusStartupInput gpsi;
+
 #define MAX_LOADSTRING 100
 
 // WCHAR = 유니코드 저장용 char형 데이터
@@ -45,22 +54,52 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,             // 프로그램의 �
 
     MSG msg;
 
-    // 기본 메시지 루프입니다:
-    while (GetMessage(&msg, nullptr, 0, 0)) // 사용자의 반응(메세지)
+    //GetMessage
+    // 프로세스에서 발생한 메세지를 메세지 큐에서 가져오는 함수
+    // 메세지큐 == null => 메세지 가져오지 않음
+    // 메세지큐가 없으면 멈춤
+
+    // PeekMessage : 
+    // 메세지 큐의 메세지 유뮤와 관계없이 함수 리턴
+    // 리턴 == true : message 있음, 리턴 == false : message 없음 알려줌
+    // 메세지큐 신경 없이 항상 작동
+
+
+    while (true) // 메세지 큐의 여부와 상관없이 작동하는 루프
+    {
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+
+            if (msg.message == WM_QUIT)
+                break;
+
+            if(!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+            {
+                TranslateMessage(&msg);     // 메세지를 번역
+                DispatchMessage(&msg);      // 메세지를 적용
+            }
+        }
+        else {
+           
+            application.Run();
+            // 메세지가 없을 경우 여기서 처리
+            // 게임 로직 함수 처리
+        }
+
+        
+    }
+
+    // 기본 메시지 루프입니다 -PeekMessage롷 병합
+    /*while (GetMessage(&msg, nullptr, 0, 0)) // 메세지가 받는 경우에만 루프
     {
         if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
         {
             TranslateMessage(&msg);     // 메세지를 번역
             DispatchMessage(&msg);      // 메세지를 적용
         }
-    }
-
+    }*/
+    Gdiplus::GdiplusShutdown(gpToken); // 메모리에서 토큰 제거
     return (int) msg.wParam;
 }
-
-
-//캐릭터 구현
-
 
 
 //
@@ -101,26 +140,32 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
+    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
+    const UINT width = 1600;
+    const UINT height = 900;
 
-   // 창 생성 함수(윈도우 스타일, 타이틀 이름, 윈도우 형태, 윈도우 생성 위치x, y, 가로세로 크기x, y, 부모 윈도우, 메뉴 정보, 창 인스턴스, 좌표 저장하는 파라미터)
-   // 반환 => 핸들 반환(윈도우가 가지고 있는 주소의 위치)
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr); 
+    // 창 생성 함수(윈도우 스타일, 타이틀 이름, 윈도우 형태, 윈도우 생성 위치x, y, 가로세로 크기x, y, 부모 윈도우, 메뉴 정보, 창 인스턴스, 좌표 저장하는 파라미터)
+    // 반환 => 핸들 반환(윈도우가 가지고 있는 주소의 위치)
+    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, 0, width, height, nullptr, nullptr, hInstance, nullptr);
+    application.Initialize(hWnd, width, height);
+    //2개 이상 윈도우 생성 가능
+    // HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+    //     CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
-  //2개 이상 윈도우 생성 가능
-  // HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-  //     CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+    if (!hWnd)
+    {
+        return FALSE;
+    }
 
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+    ShowWindow(hWnd, nCmdShow);  // 윈도우 보이기
+    UpdateWindow(hWnd);          // 윈도우 창 업데이트
 
-   ShowWindow(hWnd, nCmdShow);  // 윈도우 보이기
-   UpdateWindow(hWnd);          // 윈도우 창 업데이트
+    Gdiplus::GdiplusStartup(&gpToken, &gpsi, NULL); // gdiplus로 이미지 불러오기 시작(포인터 토큰, gdi인풋, gdi 아웃풋)
 
-   return TRUE;
+    PracticeEngine::LoadScenes(); // 씬 로딩
+
+    return TRUE;
 }
 
 //
@@ -159,24 +204,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hWnd, &ps);
 
-        HBRUSH br = CreateSolidBrush(RGB(255, 0, 255)); // 브러쉬 생성(어떤 브러쉬가 그림이 그려질지)
-        HBRUSH oldbr = (HBRUSH)SelectObject(hdc, br); // hdc에게 브러쉬 대입 이후 오래된(이전에) 브러쉬 리턴
-
-        Rectangle(hdc, 100, 100, 200, 200); // 사각형 그리는 함수
-
-        (HBRUSH)SelectObject(hdc, oldbr); // 오래된 브러쉬로 돌려놓기
-        DeleteObject(br); // 생성된 브러쉬를 제거
-
-        HPEN p = CreatePen(PS_SOLID, 10,  RGB(255, 0, 0)); // 같은 원리를 펜에 적용
-        HPEN oldp = (HPEN)SelectObject(hdc, p);
-
-        Ellipse(hdc, 200, 300, 500, 700);
-
-        (HBRUSH)SelectObject(hdc, oldp);
-
-        DeleteObject(p);
-        // DC = 화면 출력에 필요한 모든 데이터를 가지는 구조체
-        // GDI 모듈에 의해 관리
+        
         // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
         EndPaint(hWnd, &ps);
         break;

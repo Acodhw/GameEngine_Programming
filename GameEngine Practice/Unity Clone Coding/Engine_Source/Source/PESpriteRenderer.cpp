@@ -14,12 +14,6 @@ namespace PracticeEngine {
 	void SpriteRenderer::Update() {}
 	void SpriteRenderer::LateUpdate() {}
 	void SpriteRenderer::Render(HDC hdc) {
-
-		if (hdc == NULL) {
-			OutputDebugStringA("HDC is invalid!\n");
-			return;
-		}
-
 		Transform* tr = GetOwner()->GetComponent<Transform>();
 		Vector2 pos = tr->GetPosition();
 

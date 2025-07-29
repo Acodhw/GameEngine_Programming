@@ -16,6 +16,7 @@
 
 // 사용자 지정 라이브러리
 #include "PEMath.h"
+#include "PEEnums.h"
 
 
 

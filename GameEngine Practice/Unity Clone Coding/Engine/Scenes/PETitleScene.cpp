@@ -33,4 +33,13 @@ namespace PracticeEngine {
         wchar_t str[50] = L"Title";
         TextOut(hdc, 50, 50, str, wcslen(str));
     }
+
+    void TitleScene::OnEnter()
+    {
+        Scene::OnEnter();
+    }
+    void TitleScene::OnExit()
+    {
+        Scene::OnExit();
+    }
 }

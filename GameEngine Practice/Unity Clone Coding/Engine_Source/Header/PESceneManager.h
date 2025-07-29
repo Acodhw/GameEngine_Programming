@@ -21,11 +21,15 @@ namespace PracticeEngine {
 		// 씬 메지녀가 가지고 있는 씬 정보를 제공합니다
 		static Scene* LoadScene(const std::wstring& name)
 		{
+			if(mActiveScene)
+				mActiveScene->OnExit();
 			std::map<std::wstring, Scene*>::iterator iter = mScene.find(name); // 씬 map에서 해당 이름 씬을 찾기
 			if (iter == mScene.end()) // 씬이 없으면
 				return nullptr; // nullptr 제공
 
 			mActiveScene = iter->second; // 현재 활성화 씬을 지금 씬으로 변경
+
+			mActiveScene->OnEnter();
 
 			return iter->second; // 찾은 씬 리턴
 		}
