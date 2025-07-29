@@ -11,6 +11,7 @@ namespace PracticeEngine {
 		static Scene* CreateScene(const std::wstring& name) {
 			T* scene = new T();
 			scene->SetName(name);
+			mActiveScene = scene;
 			scene->Initialize(); // æ¿ √ ±‚»≠
 
 			mScene.insert(std::make_pair(name, scene)); // æ¿¿ª æ¿ mapø° ≥÷¿Ω
@@ -33,6 +34,8 @@ namespace PracticeEngine {
 
 			return iter->second; // √£¿∫ æ¿ ∏Æ≈œ
 		}
+
+		static Scene* GetActiveScene() { return mActiveScene; }
 
 		static void Initialize();
 		static void Update();

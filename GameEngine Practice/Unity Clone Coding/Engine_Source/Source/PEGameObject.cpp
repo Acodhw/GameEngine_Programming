@@ -1,12 +1,13 @@
 #include "PEGameObject.h"
 #include "PEInput.h"
 #include "PETime.h"
+#include "PETransform.h"
 
 namespace PracticeEngine
 {
 	GameObject::GameObject()
 	{
-
+		initializeTransform();
 	}
 	GameObject::~GameObject()
 	{
@@ -28,6 +29,11 @@ namespace PracticeEngine
 	void GameObject::Render(HDC hdc) 
 	{ 
 		for (Component* c : mComponents) c->Render(hdc);
+	}
+
+	void GameObject::initializeTransform()
+	{
+		AddComponent<Transform>();
 	}
 
 }

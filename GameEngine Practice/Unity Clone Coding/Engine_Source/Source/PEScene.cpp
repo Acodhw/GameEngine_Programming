@@ -3,11 +3,8 @@
 namespace PracticeEngine {
 	Scene::Scene() : mLayers{}
 	{
-		mLayers.resize((UINT)eLayerType::Max);
-
-		for (size_t i = 0; i < (UINT)eLayerType::Max; i++) {
-			mLayers.at(i) = new Layer();
-		}
+		createLayers();
+		
 	}
 	Scene::~Scene()
 	{
@@ -55,5 +52,14 @@ namespace PracticeEngine {
 
 	void Scene::AddGameObject(GameObject* go, eLayerType layer) {
 		mLayers[(UINT)layer]->AddGameObject(go);
+	}
+
+	void Scene::createLayers()
+	{
+		mLayers.resize((UINT)eLayerType::Max);
+
+		for (size_t i = 0; i < (UINT)eLayerType::Max; i++) {
+			mLayers.at(i) = new Layer();
+		}
 	}
 }

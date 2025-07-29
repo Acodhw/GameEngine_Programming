@@ -1,8 +1,10 @@
 #include "PEPlayScene.h"
 #include "PEPlayer.h"
+#include "PEBackGround.h"
 #include"PEGameObject.h"
 #include "PETransform.h"
 #include "PESpriteRenderer.h"
+#include "PEObject.h"
 
 
 namespace PracticeEngine {
@@ -17,29 +19,15 @@ namespace PracticeEngine {
     {
         Scene::Initialize();
 
-        Player* bg = new Player();
-        Transform* tr = bg->AddComponent<Transform>();
-        tr->SetPos(Vector2(0, 0));
-
-        tr->SetName(L"TR");
-
-        SpriteRenderer* sr = bg->AddComponent<SpriteRenderer>();
-        sr->SetName(L"SR");
+        GameObject * pl = Object::Instantiate<Player>
+            (eLayerType::Player, Vector2(100.0f, 100.0f));
+        SpriteRenderer* sr = pl->AddComponent<SpriteRenderer>();
         sr->ImageLoad(L"..\\Resources\\Player_idle.png");
 
-        AddGameObject(bg, eLayerType::Player);
-
-        Player* bg2 = new Player();
-        Transform* tr2 = bg2->AddComponent<Transform>();
-        tr2->SetPos(Vector2(0, 0));
-
-        tr2->SetName(L"TR2");
-
+        GameObject* bg2 = Object::Instantiate<BackGround>
+            (eLayerType::BackGround, Vector2(0, 0));
         SpriteRenderer* sr2 = bg2->AddComponent<SpriteRenderer>();
-        sr2->SetName(L"SR2");
         sr2->ImageLoad(L"..\\Resources\\CloudOcean.png");
-
-        AddGameObject(bg2, eLayerType::BackGround);
     }
 
     void PlayScene::Update()

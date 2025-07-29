@@ -23,6 +23,10 @@ namespace PracticeEngine {
 
 		// 레이어에 게임오브젝트를 배치합니다
 		void AddGameObject(GameObject* go, eLayerType layer);
+		Layer* GetLayer(const eLayerType layer) { return mLayers[(UINT)layer]; }
+
+	private:
+		void createLayers();
 
 	private:
 		std::vector<Layer*> mLayers; // 씬에 배치된 레이어들

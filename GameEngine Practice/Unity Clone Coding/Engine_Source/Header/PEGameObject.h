@@ -42,6 +42,9 @@ namespace PracticeEngine
 		} 
 
 	private:
+		void initializeTransform();
+
+	private:
 		std::vector<Component*> mComponents; //이 게임 오브젝트가 가지고 있는 컴포넌트 리스트
 	};
 }
