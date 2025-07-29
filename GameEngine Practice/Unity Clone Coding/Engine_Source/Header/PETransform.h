@@ -3,6 +3,8 @@
 #include "PEComponent.h"
 
 namespace PracticeEngine {
+	using namespace Math;
+	// 오브젝트의 위치, 크기, 회전을 지정하는 컴포넌트
 	class Transform : public Component
 	{
 	public :
@@ -14,13 +16,12 @@ namespace PracticeEngine {
 		void LateUpdate() override;
 		void Render(HDC hdc) override;
 
-		void SetPos(int x, int y) { mX = x; mY = y; }
-		int GetX() { return mX; }
-		int GetY() { return mY; }
-
+		// 포지션을 지정합니다
+		void SetPos(Vector2 pos) { mPosition.x = pos.x; mPosition.y = pos.y; }
+		// 포지션을 가져옵니다
+		Vector2 GetPosition() { return mPosition; }
 	private:
-		int mX;
-		int mY;
+		Vector2 mPosition;
 	};
 }
 

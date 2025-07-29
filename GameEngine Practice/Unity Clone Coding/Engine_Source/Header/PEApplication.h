@@ -3,6 +3,7 @@
 #include "PEGameObject.h"
 
 namespace PracticeEngine {
+	// 애플리케이션 기본 클래스
 	class Application
 	{
 	public:

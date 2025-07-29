@@ -2,7 +2,7 @@
 #include "CommonInclude.h"
 
 namespace PracticeEngine {
-
+	// 게임의 시간 정보를 체크하는 클래스
 	class Time
 	{
 	public:
@@ -10,7 +10,7 @@ namespace PracticeEngine {
 		static void Update();
 		static void Render(HWND hwmd);
 
-		static const float& DeltaTime;
+		static const float& DeltaTime; // 1프레임당 변하는 시간
 
 	private:
 		static LARGE_INTEGER cpuFrequency; //cpu 고유진동수 

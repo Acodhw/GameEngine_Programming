@@ -1,7 +1,7 @@
 #include "PETransform.h"
 
 namespace PracticeEngine {
-	Transform::Transform() : mX(0), mY(0) {}
+	Transform::Transform() : mPosition{0,0} {}
 	Transform::~Transform() {}
 
 	void Transform::Initialize() {}
