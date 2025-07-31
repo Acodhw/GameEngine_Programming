@@ -5,6 +5,8 @@
 #include "PETransform.h"
 #include "PESpriteRenderer.h"
 #include "PEObject.h"
+#include "PETexture.h"
+#include "PEResources.h"
 
 
 namespace PracticeEngine {
@@ -19,15 +21,20 @@ namespace PracticeEngine {
     {
         Scene::Initialize();
 
+        // 게임 오브젝트 로딩 전, 리소스 로딩
+        
         GameObject * pl = Object::Instantiate<Player>
             (eLayerType::Player, Vector2(100.0f, 100.0f));
         SpriteRenderer* sr = pl->AddComponent<SpriteRenderer>();
-        sr->ImageLoad(L"..\\Resources\\Player_idle.png");
+        Graphics::Texture* tex = Resources::Find<Graphics::Texture>(L"PL");
+        sr->SetTexture(tex);
 
         GameObject* bg2 = Object::Instantiate<BackGround>
             (eLayerType::BackGround, Vector2(0, 0));
         SpriteRenderer* sr2 = bg2->AddComponent<SpriteRenderer>();
-        sr2->ImageLoad(L"..\\Resources\\CloudOcean.png");
+        tex = Resources::Find<Graphics::Texture>(L"BG");
+        sr2->SetTexture(tex);
+
     }
 
     void PlayScene::Update()

@@ -4,9 +4,8 @@
 
 namespace PracticeEngine {
 	SpriteRenderer::SpriteRenderer()
-		: mImage(nullptr)
-		, mWidth(0)
-		, mHeight(0) 
+		: mTexture(nullptr)
+
 	{}
 	SpriteRenderer::~SpriteRenderer(){}
 
@@ -14,18 +13,33 @@ namespace PracticeEngine {
 	void SpriteRenderer::Update() {}
 	void SpriteRenderer::LateUpdate() {}
 	void SpriteRenderer::Render(HDC hdc) {
+
+		if (mTexture == nullptr) {
+			MessageBox(nullptr, L"Texture Loading Error!\nTexture is Empty!", L"Error!", MB_OK);
+			assert(false);
+		}
+
 		Transform* tr = GetOwner()->GetComponent<Transform>();
 		Vector2 pos = tr->GetPosition();
 
 		Gdiplus::Graphics graphcis(hdc);
-		graphcis.DrawImage(mImage, pos.x, pos.y, mWidth, mHeight);
+		switch (mTexture->GetTextureType())
+		{
+		case Graphics::Texture::eTextureType::BMP:
+			TransparentBlt(hdc, pos.x, pos.y, mTexture->width, mTexture->height,
+				mTexture->GetHdc(), 0, 0, mTexture->width, mTexture->height, RGB(255, 255, 255));
+			break;
+		case Graphics::Texture::eTextureType::PNG:			
+			graphcis.DrawImage(mTexture->GetImage(),
+				Gdiplus::Rect(pos.x, pos.y, mTexture->width, mTexture->height));
+			break;
+		default:
+			break;
+		}
+
+
 	}
 
-	void SpriteRenderer::ImageLoad(const std::wstring& path)
-	{
-		mImage = Gdiplus::Image::FromFile(path.c_str());
-		mWidth = mImage->GetWidth();
-		mHeight = mImage->GetHeight();
-	}
+	
 }
 

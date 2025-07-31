@@ -7,6 +7,7 @@
 #include <string>
 #include <map>
 
+#include <cassert>
 #include <mmsystem.h>
 #include <dinput.h>
 #include <gdiplus.h>

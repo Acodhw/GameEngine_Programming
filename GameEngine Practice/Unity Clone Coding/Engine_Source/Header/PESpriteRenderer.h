@@ -1,5 +1,6 @@
 #pragma once
 #include "CommonInclude.h"
+#include "PETexture.h"
 #include "PEComponent.h"
 
 namespace PracticeEngine {
@@ -15,13 +16,10 @@ namespace PracticeEngine {
 		void LateUpdate() override;
 		void Render(HDC hdc) override;
 
-		// 그릴 이미지를 로딩합니다
-		void ImageLoad(const std::wstring& path);
+		void SetTexture(Graphics::Texture* tx) { mTexture = tx; }
 
 	private:
-		Gdiplus::Image* mImage; // 그려질 이미지
-		UINT mWidth; // 이미지의 가로 크기
-		UINT mHeight; // 이미지의 세로 크기
+		Graphics::Texture* mTexture;
 	};
 }
 

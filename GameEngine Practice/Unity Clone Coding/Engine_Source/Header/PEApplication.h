@@ -17,6 +17,9 @@ namespace PracticeEngine {
 
 		void Render();
 
+		// HDC를 가져옵니다
+		HDC GetHDC() { return mHdc; }
+
 	private:
 		void infoTitle(); // 타이틀에 인포 표시
 

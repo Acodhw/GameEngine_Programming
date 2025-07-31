@@ -4,6 +4,13 @@ namespace PracticeEngine {
 	namespace Math {
 		// X, Y로 이뤄진 벡터 정보를 담습니다
 		struct Vector2 {
+			static Vector2 One; // 모든 방향이 1인 벡터
+			static Vector2 Zero; // 모든 방향이 0인 벡터
+			static Vector2 Left; // 왼쪽 방향 벡터
+			static Vector2 Right; // 오른쪽 방향 벡터
+			static Vector2 Up; // 위 방향 벡터
+			static Vector2 Down; // 아래 방향 벡터
+
 			float x;
 			float y;
 
@@ -21,5 +28,7 @@ namespace PracticeEngine {
 
 			}
 		};
+		 
 	}
+
 }
