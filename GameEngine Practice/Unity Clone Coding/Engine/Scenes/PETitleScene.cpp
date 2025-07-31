@@ -1,5 +1,5 @@
 #include "PETitleScene.h"
-#include "PEPlayer.h"
+#include "PESpriteObj.h"
 #include "PESceneManager.h"
 #include "PEGameObject.h"
 #include "PETransform.h"

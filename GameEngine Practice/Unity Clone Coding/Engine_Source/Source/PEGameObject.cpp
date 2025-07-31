@@ -7,28 +7,44 @@ namespace PracticeEngine
 {
 	GameObject::GameObject()
 	{
+		mComponents.resize((UINT)eComponentType::End);
 		initializeTransform();
 	}
 	GameObject::~GameObject()
 	{
-
+		for (Component* c : mComponents) {
+			delete c;
+			c = nullptr;
+		}
 	}
 
 	void GameObject::Initialize() {
-		for (Component* c : mComponents) c->Initialize();
+		for (Component* c : mComponents) {
+			if (c == nullptr) continue;
+			c->Initialize();
+		}
 	}
 
 	void GameObject::Update() {
-		for (Component* c : mComponents) c->Update();
+		for (Component* c : mComponents) {
+			if (c == nullptr) continue;
+			c->Update();
+		}
 	}
 
 	void GameObject::LateUpdate() {
-		for (Component* c : mComponents) c->LateUpdate();
+		for (Component* c : mComponents) {
+			if (c == nullptr) continue;
+			c->LateUpdate();
+		}
 	}
 
-	void GameObject::Render(HDC hdc) 
-	{ 
-		for (Component* c : mComponents) c->Render(hdc);
+	void GameObject::Render(HDC hdc)
+	{
+		for (Component* c : mComponents) {
+			if (c == nullptr) continue;
+			c->Render(hdc);
+		}
 	}
 
 	void GameObject::initializeTransform()

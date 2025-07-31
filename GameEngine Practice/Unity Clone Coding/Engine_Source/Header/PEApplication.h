@@ -19,6 +19,8 @@ namespace PracticeEngine {
 
 		// HDC를 가져옵니다
 		HDC GetHDC() { return mHdc; }
+		// 해상도를 가져옵니다
+		Math::Vector2 GetResolution() { return Math::Vector2(mWidth, mHeight); }
 
 	private:
 		void infoTitle(); // 타이틀에 인포 표시

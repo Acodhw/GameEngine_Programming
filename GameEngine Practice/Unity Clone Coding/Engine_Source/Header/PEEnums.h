@@ -2,6 +2,13 @@
 
 namespace PracticeEngine
 {
+	enum class eComponentType {
+		Transform,
+		SpriteRenderer,
+		Script,
+		Camera,
+		End
+	};
 	enum class eLayerType {
 		None,
 		BackGround,

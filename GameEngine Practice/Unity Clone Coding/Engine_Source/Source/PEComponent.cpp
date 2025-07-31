@@ -1,7 +1,8 @@
 #include "PEComponent.h"
 
 namespace PracticeEngine {
-	Component::Component() 
+	Component::Component(eComponentType ctype)
+		: mC_Type(ctype)
 	{
 	
 	}

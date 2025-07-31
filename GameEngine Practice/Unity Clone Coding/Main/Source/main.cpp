@@ -7,6 +7,7 @@
 //#pragma comment(lib, "..\\x64\\Debug\\PracticeEngine_Window.lib")
 #include "..\\PracticeEngine_SOURCE\\PEApplication.h"
 #include "..\\PracticeEngine_Window\\PELoadScene.h"
+#include "..\\PracticeEngine_Window\\PELoadResources.h"
 
 PracticeEngine::Application application;
 
@@ -141,8 +142,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
-    const UINT width = 1600;
-    const UINT height = 900;
+    const UINT width = 600;
+    const UINT height = 400;
 
     // 창 생성 함수(윈도우 스타일, 타이틀 이름, 윈도우 형태, 윈도우 생성 위치x, y, 가로세로 크기x, y, 부모 윈도우, 메뉴 정보, 창 인스턴스, 좌표 저장하는 파라미터)
     // 반환 => 핸들 반환(윈도우가 가지고 있는 주소의 위치)
@@ -163,6 +164,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     Gdiplus::GdiplusStartup(&gpToken, &gpsi, NULL); // gdiplus로 이미지 불러오기 시작(포인터 토큰, gdi인풋, gdi 아웃풋)
 
+    PracticeEngine::LoadResources(); // 리소스 로딩
     PracticeEngine::LoadScenes(); // 씬 로딩
 
     return TRUE;

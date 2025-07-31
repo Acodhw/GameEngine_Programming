@@ -3,7 +3,7 @@
 
 namespace PracticeEngine {
 
-	class Player : public GameObject
+	class SpriteObj : public GameObject
 	{
 	public:
 		void Initialize() override;
@@ -12,7 +12,6 @@ namespace PracticeEngine {
 		void Render(HDC hdc) override;
 
 	private:
-		float Speed = 200;
 	};
 }
 

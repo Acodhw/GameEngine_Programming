@@ -8,7 +8,7 @@ namespace PracticeEngine {
 	class Component : public Entity
 	{
 	public:
-		Component();
+		Component(eComponentType ctype);
 		~Component();
 
 		virtual void Initialize();
@@ -20,8 +20,10 @@ namespace PracticeEngine {
 		void SetOwner(GameObject* owner) { mOwner = owner; };
 		// 컴포넌트를 가지고 있는 오브젝트를 가져옵니다
 		GameObject* GetOwner() { return mOwner; }
+		eComponentType GetType() { return mC_Type; }
 	private:
 		GameObject* mOwner; // 컴포넌트를 가지고 있는 오브젝트
+		eComponentType mC_Type;
 	};
 }
 
