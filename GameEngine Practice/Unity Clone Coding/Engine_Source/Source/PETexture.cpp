@@ -26,11 +26,16 @@ namespace PracticeEngine {
 
 			if (ext == L"bmp") {
 				mT_Type = eTextureType::BMP;
-				mBitmap = (HBITMAP)LoadImageW(nullptr, path.c_str(), IMAGE_BITMAP, 0, 0,
-					LR_LOADFROMFILE | LR_CREATEDIBSECTION);
+				/*mBitmap = (HBITMAP)LoadImageW(nullptr, path.c_str(), IMAGE_BITMAP, 0, 0,
+					LR_LOADFROMFILE | LR_CREATEDIBSECTION);*/
 
-				if (mBitmap == nullptr) return S_FALSE;
+				Gdiplus::Bitmap* bitmap = new Gdiplus::Bitmap(path.c_str());
+				if (bitmap->GetLastStatus() == Gdiplus::Ok) {
+					bitmap->GetHBITMAP(RGB(255, 255, 255), &mBitmap);
+				}
 
+				if (mBitmap == nullptr) return E_FAIL;
+				
 				BITMAP info = {};
 				GetObject(mBitmap, sizeof(BITMAP), &info);
 
@@ -47,7 +52,7 @@ namespace PracticeEngine {
 				mT_Type = eTextureType::PNG;
 				mImage = Gdiplus::Image::FromFile(path.c_str());
 
-				if (mImage == nullptr) return S_FALSE;
+				if (mImage == nullptr) return E_FAIL;
 
 				mWidth = mImage->GetWidth();
 				mHeight = mImage->GetHeight();

@@ -6,7 +6,7 @@ namespace PracticeEngine {
 		class Texture : public Resource
 		{
 		public:
-			enum  class eTextureType
+			enum class eTextureType
 			{
 				BMP,
 				PNG,

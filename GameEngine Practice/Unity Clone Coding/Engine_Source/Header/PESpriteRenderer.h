@@ -16,6 +16,7 @@ namespace PracticeEngine {
 		void LateUpdate() override;
 		void Render(HDC hdc) override;
 
+		// 텍스쳐를 지정합니다
 		void SetTexture(Graphics::Texture* tx) { mTexture = tx; }
 
 	private:

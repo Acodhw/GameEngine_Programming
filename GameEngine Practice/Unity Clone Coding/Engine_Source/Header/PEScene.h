@@ -26,6 +26,7 @@ namespace PracticeEngine {
 		Layer* GetLayer(const eLayerType layer) { return mLayers[(UINT)layer]; }
 
 	private:
+		// 레이어를 생성합니다
 		void createLayers();
 
 	private:

@@ -34,7 +34,7 @@ namespace PracticeEngine {
 
 			return iter->second; // 찾은 씬 리턴
 		}
-
+		// 현재 작동중인 씬을 가져옵니다
 		static Scene* GetActiveScene() { return mActiveScene; }
 
 		static void Initialize();

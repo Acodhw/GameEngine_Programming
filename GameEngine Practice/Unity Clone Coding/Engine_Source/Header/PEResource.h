@@ -12,8 +12,9 @@ namespace PracticeEngine {
 
 		// 리소스를 로딩하는 함수
 		virtual HRESULT Load(const std::wstring& path) = 0; // 순수가상함수 => 클래스를 추상화/메모리 할당 불가
-
+		// 리소스의 경로를 가져옵니다
 		const std::wstring& GetPath() { return mPath; }
+		// 리소스의 경로를 불러옵니다
 		void SetPath(const std::wstring& path) { mPath = path; }
 
 	private:

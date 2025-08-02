@@ -5,7 +5,7 @@ namespace PracticeEngine {
 	class Resources 
 	{
 	public:
-
+		// 리소스 목록에서 리소스를 찾습니다
 		template<typename T>
 		static T* Find(const std::wstring& key){
 			auto iter = mResources.find(key);
@@ -14,7 +14,7 @@ namespace PracticeEngine {
 
 			return dynamic_cast<T*>(iter->second);
 		}
-
+		// 리소스 목록에 리소스를 로드합니다
 		template<typename T>
 		static T* Load(const std::wstring& key, const std::wstring& path) {
 			T* resource = Resources::Find<T>(key);
@@ -27,7 +27,6 @@ namespace PracticeEngine {
 				assert(false);
 			}
 			
-			
 			resource->SetName(key);
 			resource->SetPath(path);
 			mResources.insert(std::make_pair(key, resource));
@@ -36,7 +35,7 @@ namespace PracticeEngine {
 		}
 
 	private:
-		static std::map<std::wstring, Resource*> mResources;
+		static std::map<std::wstring, Resource*> mResources; // 현재 리소스 목록입니다
 	};
 }
 

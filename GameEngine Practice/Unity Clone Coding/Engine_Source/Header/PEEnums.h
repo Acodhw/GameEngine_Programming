@@ -7,6 +7,7 @@ namespace PracticeEngine
 		SpriteRenderer,
 		Script,
 		Camera,
+		Animator,
 		End
 	};
 	enum class eLayerType {
@@ -22,6 +23,7 @@ namespace PracticeEngine
 		//Mesh
 		//Shader
 		AudioClip,
+		Animaiton,
 		Prefab,
 		End,
 	};

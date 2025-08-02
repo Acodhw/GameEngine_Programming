@@ -9,6 +9,7 @@
 #include "PEResources.h"
 #include "PECamera.h"
 #include "PERenderer.h"
+#include "PEAnimator.h"
 
 
 namespace PracticeEngine {
@@ -33,11 +34,14 @@ namespace PracticeEngine {
         
         GameObject * pl = Object::Instantiate<SpriteObj>
             (eLayerType::Player, Vector2(100.0f, 100.0f));
-        SpriteRenderer* sr = pl->AddComponent<SpriteRenderer>();
-        Graphics::Texture* tex = Resources::Find<Graphics::Texture>(L"PL");
-        sr->SetTexture(tex);
+        Graphics::Texture* tex = Resources::Find<Graphics::Texture>(L"PL_S");
         pl->AddComponent<PlayerScript>();
         cComp->SetTarger(pl);
+
+        Animator* animator = pl->AddComponent<Animator>();
+        animator->CreateAnimation(L"idle", tex
+            , Vector2(0.0f, 0.0f), Vector2(64.0f, 64.0f), Vector2(0.5f, 0.5f), 7, 0.3f);
+        animator->PlayAnimation(L"idle", true);         
 
         GameObject* bg2 = Object::Instantiate<SpriteObj>
             (eLayerType::BackGround, Vector2(750, 520));

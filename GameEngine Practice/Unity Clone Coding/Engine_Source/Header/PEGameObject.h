@@ -44,6 +44,7 @@ namespace PracticeEngine
 		} 
 
 	private:
+		// 게임 오브젝트의 기본 Transform 컴포넌트를 대입합니다
 		void initializeTransform();
 
 	private:
