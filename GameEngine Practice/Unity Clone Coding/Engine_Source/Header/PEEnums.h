@@ -15,6 +15,7 @@ namespace PracticeEngine
 		BackGround,
 		//레이어 추가
 		Player,
+		particle,
 		Max = 16,
 	};
 

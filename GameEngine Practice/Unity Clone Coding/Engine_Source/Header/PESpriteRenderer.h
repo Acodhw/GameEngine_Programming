@@ -18,9 +18,11 @@ namespace PracticeEngine {
 
 		// 텍스쳐를 지정합니다
 		void SetTexture(Graphics::Texture* tx) { mTexture = tx; }
-
+		// 이미지 크기를 지정합니다
+		void SetSize(Math::Vector2 size) { mSize = size; }
 	private:
 		Graphics::Texture* mTexture;
+		Math::Vector2 mSize;
 	};
 }
 

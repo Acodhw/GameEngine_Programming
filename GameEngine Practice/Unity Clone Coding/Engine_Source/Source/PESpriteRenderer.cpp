@@ -8,6 +8,7 @@ namespace PracticeEngine {
 	SpriteRenderer::SpriteRenderer()
 		: Component(eComponentType::SpriteRenderer)
 		,mTexture(nullptr)
+		, mSize(Vector2::One)
 	{}
 	SpriteRenderer::~SpriteRenderer(){}
 
@@ -23,6 +24,8 @@ namespace PracticeEngine {
 
 		Transform* tr = GetOwner()->GetComponent<Transform>();
 		Vector2 pos = tr->GetPosition();
+		Vector2 scl = tr->GetScale();
+		float rot = tr->GetRotation();
 		pos = Renderer::mainCamera->CaluatePosition(pos);
 
 		Gdiplus::Graphics graphcis(hdc);
@@ -31,13 +34,13 @@ namespace PracticeEngine {
 		case Graphics::Texture::eTextureType::BMP:
 			TransparentBlt(hdc,
 				pos.x - mTexture->width / 2, pos.y - mTexture->height / 2,
-				mTexture->width, mTexture->height,
+				mTexture->width * scl.x, mTexture->height * scl.y,
 				mTexture->GetHdc(), 0, 0, mTexture->width, mTexture->height, RGB(255, 255, 255));
 			break;
 		case Graphics::Texture::eTextureType::PNG:
 			graphcis.DrawImage(mTexture->GetImage(),
 				Gdiplus::Rect(pos.x - mTexture->width / 2, pos.y - mTexture->height / 2,
-					mTexture->width, mTexture->height));
+					mTexture->width * scl.x * scl.y, mTexture->height));
 			break;
 		default:
 			break;

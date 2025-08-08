@@ -18,10 +18,20 @@ namespace PracticeEngine {
 
 		// 포지션을 지정합니다
 		void SetPos(Vector2 pos) { mPosition.x = pos.x; mPosition.y = pos.y; }
+		// 회전을 지정합니다	
+		void SetRot(float rot) { mRotation = rot; }
+		// 크기를 지정합니다
+		void SetScl(Vector2 scl) { mScale.x = scl.x; mScale.y = scl.y; }
 		// 포지션을 가져옵니다
 		Vector2 GetPosition() { return mPosition; }
+		// 회전 정보를 가져옵니다
+		float GetRotation() { return mRotation; }
+		// 크기 정보를 가져옵니다
+		Vector2 GetScale() { return mScale; }
 	private:
 		Vector2 mPosition;
+		Vector2 mScale;
+		float mRotation;
 	};
 }
 

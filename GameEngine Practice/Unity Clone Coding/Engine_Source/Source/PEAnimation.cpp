@@ -49,8 +49,12 @@ namespace PracticeEngine {
 		GameObject* g =	mAnimator->GetOwner();
 		Transform* tr = g->GetComponent<Transform>();
 		Vector2 pos = tr->GetPosition();
+		Vector2 scl = tr->GetScale();
+		float rot = tr->GetRotation();
 
 		if (Renderer::mainCamera) pos = Renderer::mainCamera->CaluatePosition(pos);
+
+		Graphics::Texture::eTextureType type = mTexture->GetTextureType();
 
 		Sprite spr = mAnimationSheet[mIndex];
 		HDC imgHdc = mTexture->GetHdc();
@@ -61,13 +65,13 @@ namespace PracticeEngine {
 			func.BlendOp = AC_SRC_OVER;
 			func.BlendFlags = 0;
 			func.AlphaFormat = AC_SRC_ALPHA;
-			func.SourceConstantAlpha = 255;
+			func.SourceConstantAlpha = 100;
 
 			AlphaBlend(hdc,
-				pos.x - (spr.size.x * spr.offset.x),
-				pos.y - (spr.size.y * spr.offset.y),
-				spr.size.x,
-				spr.size.y,
+				pos.x - (spr.size.x * scl.x * spr.offset.x),
+				pos.y - (spr.size.y * scl.y * spr.offset.y),
+				spr.size.x * scl.x,
+				spr.size.y * scl.y,
 				imgHdc,
 				spr.leftTop.x,
 				spr.leftTop.y,
@@ -78,17 +82,27 @@ namespace PracticeEngine {
 
 		else if (mTexture->GetTextureType() == Graphics::Texture::eTextureType::PNG)
 		{
+			Gdiplus::ImageAttributes imgAtt = {};
+
+			imgAtt.SetColorKey(Gdiplus::Color(255, 255, 255), Gdiplus::Color(100, 100, 100));
+			
 			Gdiplus::Graphics graphcis(hdc);
+
+			graphcis.TranslateTransform(pos.x, pos.y);
+			graphcis.RotateTransform(rot);
+			graphcis.TranslateTransform(-pos.x, -pos.y);
+
 			graphcis.DrawImage(mTexture->GetImage(),
-				Gdiplus::Rect(pos.x - (spr.size.x * spr.offset.x),
-					pos.y - (spr.size.y * spr.offset.y),
-					spr.size.x,
-					spr.size.y),
+				Gdiplus::Rect(pos.x - (spr.size.x * scl.x * spr.offset.x),
+					pos.y - (spr.size.y * scl.y * spr.offset.y),
+					spr.size.x * scl.x,
+					spr.size.y * scl.y),
 					spr.leftTop.x,
 					spr.leftTop.y,
 					spr.size.x,
 					spr.size.y,
-					Gdiplus::Unit::UnitPixel);
+					Gdiplus::Unit::UnitPixel,
+					&imgAtt);
 		}
 	}
 
