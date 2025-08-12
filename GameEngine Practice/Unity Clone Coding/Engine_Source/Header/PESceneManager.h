@@ -41,6 +41,8 @@ namespace PracticeEngine {
 		static void Update();
 		static void LateUpdate();
 		static void Render(HDC hdc);
+		static void Release();
+
 	private:
 		static std::map<std::wstring, Scene*> mScene; // 씬 메니저에 로드 된 씬 종류
 		static Scene* mActiveScene; // 현재 활성화된 씬

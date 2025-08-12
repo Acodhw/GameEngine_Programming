@@ -78,6 +78,12 @@ namespace PracticeEngine {
 		infoTitle();
 	}
 
+	void Application::Release()
+	{
+		SceneManager::Release();
+		Resources::Release();
+	}
+
 	void Application::infoTitle() {
 		float fps = 1.0f / Time::DeltaTime;	
 

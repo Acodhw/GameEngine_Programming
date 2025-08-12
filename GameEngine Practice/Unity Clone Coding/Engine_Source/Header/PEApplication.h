@@ -17,6 +17,10 @@ namespace PracticeEngine {
 
 		void Render();
 
+		void Release();
+
+		// 핸들을 가져옵니다
+		HWND GetHWND() { return mHwmd; }
 		// HDC를 가져옵니다
 		HDC GetHDC() { return mHdc; }
 		// 해상도를 가져옵니다

@@ -36,6 +36,8 @@ namespace PracticeEngine {
             (eLayerType::Player, Vector2(100.0f, 100.0f));
         Graphics::Texture* tex = Resources::Find<Graphics::Texture>(L"PL_S");
         pl->AddComponent<PlayerScript>();
+        pl->GetComponent<Transform>()->SetRot(75);
+        pl->GetComponent<Transform>()->SetScl(Vector2::One * 3);
         cComp->SetTarger(pl);
 
         Animator* animator = pl->AddComponent<Animator>();

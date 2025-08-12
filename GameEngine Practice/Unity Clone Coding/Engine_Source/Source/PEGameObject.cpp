@@ -13,6 +13,9 @@ namespace PracticeEngine
 	GameObject::~GameObject()
 	{
 		for (Component* c : mComponents) {
+			if (c == nullptr)
+				continue;
+
 			delete c;
 			c = nullptr;
 		}
