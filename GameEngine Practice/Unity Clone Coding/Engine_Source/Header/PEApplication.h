@@ -19,6 +19,8 @@ namespace PracticeEngine {
 
 		void Release();
 
+		void Destroy();
+
 		// 핸들을 가져옵니다
 		HWND GetHWND() { return mHwmd; }
 		// HDC를 가져옵니다
@@ -26,9 +28,14 @@ namespace PracticeEngine {
 		// 해상도를 가져옵니다
 		Math::Vector2 GetResolution() { return Math::Vector2(mWidth, mHeight); }
 
+
 	private:
 		void infoTitle(); // 타이틀에 인포 표시
-
+		void clearRenderTarget();
+		void copyRenderTarget(HDC source, HDC dest);
+		void adjustWindowRect(HWND hwnd, UINT width, UINT height);
+		void createBuffer(UINT width, UINT height);
+		void initializeEtc();
 	private:
 		HWND mHwmd; // 맴버 변수 핸들
 		HDC mHdc; // hdc 가져옴

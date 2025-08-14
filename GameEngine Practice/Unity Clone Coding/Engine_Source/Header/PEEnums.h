@@ -8,6 +8,7 @@ namespace PracticeEngine
 		Script,
 		Camera,
 		Animator,
+		Collider,
 		End
 	};
 	enum class eLayerType {
@@ -26,6 +27,13 @@ namespace PracticeEngine
 		AudioClip,
 		Animaiton,
 		Prefab,
+		End,
+	};
+
+	enum class eColliderType
+	{
+		Circle2D,
+		Rect2D,
 		End,
 	};
 }

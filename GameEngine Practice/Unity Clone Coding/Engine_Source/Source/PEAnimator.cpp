@@ -1,5 +1,6 @@
 #include "PEAnimator.h"
-
+#include "PEResources.h"
+#include "PETexture.h"
 
 namespace PracticeEngine {
     Animator::Animator()
@@ -56,6 +57,43 @@ namespace PracticeEngine {
         mAnimations.insert(std::make_pair(name, anim));
 
     }
+    void Animator::CreateAnimationByFolder(const std::wstring& name, const std::wstring& path, Vector2 offset, float duration)
+    {
+        Animation* anim = nullptr;
+        if ((anim = FindAnimation(name)) != nullptr) return;
+
+        int fileCount = 0;
+        std::filesystem::path fs(path);
+        std::vector<Graphics::Texture*> images = {};
+
+        for (auto& p : std::filesystem::recursive_directory_iterator(fs))
+        {
+            std::wstring fileName = p.path().filename();
+            std::wstring fullName = p.path();
+
+            Graphics::Texture* texture = Resources::Load<Graphics::Texture>(fileName, fullName);
+            images.push_back(texture);
+            fileCount++;
+        }
+
+        UINT sheetWidth = images[0]->width * fileCount;
+        UINT sheetHeight = images[0]->height;
+        Graphics::Texture* spriteSheet = Graphics::Texture::Create(name, sheetWidth, sheetHeight);
+
+        UINT imageWidth = images[0]->width;
+        UINT imageHeight = images[0]->height;
+        for (size_t i = 0; i < images.size(); i++)
+        {
+            BitBlt(spriteSheet->GetHdc(), i * imageWidth, 0
+                , imageWidth, imageHeight
+                , images[i]->GetHdc(), 0, 0, SRCCOPY);
+        }
+
+        CreateAnimation(name, spriteSheet
+            , Vector2(0.0f, 0.0f), Vector2(imageWidth, imageHeight)
+            , offset, fileCount, duration);
+    }
+
     Animation* Animator::FindAnimation(const std::wstring& name)
     {
         auto iter = mAnimations.find(name);

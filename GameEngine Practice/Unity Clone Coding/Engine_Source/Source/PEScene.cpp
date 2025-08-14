@@ -66,4 +66,15 @@ namespace PracticeEngine {
 			mLayers.at(i) = new Layer();
 		}
 	}
+
+	void Scene::Destroy()
+	{
+		for (Layer* layer : mLayers)
+		{
+			if (layer == nullptr)
+				continue;
+
+			layer->Destroy();
+		}
+	}
 }

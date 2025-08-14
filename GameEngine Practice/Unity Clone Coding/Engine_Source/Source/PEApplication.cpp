@@ -1,7 +1,8 @@
-#include "PEApplication.h"
+ï»¿#include "PEApplication.h"
 #include "PEInput.h"
 #include "PETime.h"
 #include "PESceneManager.h"
+#include "PEResources.h"
 
 #define MAX_LOADSTRING 100
 
@@ -14,54 +15,33 @@ namespace PracticeEngine {
 		, mHeight(0)
 		, mBackHDC(nullptr)
 		, mBackBuffer(nullptr)
-	{
-		title = new wchar_t[MAX_LOADSTRING];		
+		, title(new wchar_t[MAX_LOADSTRING])
+	{		
 	}
 	
 	Application::~Application() {
 		delete[] title;
 	}
-	void Application::Initialize(HWND hwmd, UINT width, UINT height) {
-		mHwmd = hwmd;
-		mHdc = GetDC(mHwmd);
-		
-		RECT rect = { 0, 0, width, height };
-		AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false); // À©µµ¿ì ÀÛ¾÷¿µ¿ªÀ» Rect·Î º¯°æ(&RECT, À©µµ¿ì½ºÅ¸ÀÏ, ¸Ş´º¹Ù)
-		
-		mWidth = rect.right - rect.left;
-		mHeight = rect.bottom - rect.top;
 
-		SetWindowPos(mHwmd, nullptr, 0, 0, rect.right - rect.left, rect.bottom - rect.top, 0);
-		ShowWindow(mHwmd, true);
-
-		GetWindowText(mHwmd, title, MAX_LOADSTRING);
-
-		// À©µµ¿ì ÇØ»óµµ¿¡ ¸Â´Â ¹é¹öÆÛ »ı¼º
-		mBackBuffer = CreateCompatibleBitmap(mHdc, width, height);
-
-		//¹é¹öÆÛ °¡¸£Å³ dc »ı¼º
-		mBackHDC = CreateCompatibleDC(mHdc);
-
-		HBITMAP oldBitmap = (HBITMAP)SelectObject(mBackHDC, mBackBuffer); // Buffer¿¡´Ù°¡ DC ¹Ù²ãÁÖ°í
-		DeleteObject(oldBitmap); // ÀÌÀü DC´Â »èÁ¦
-		
-		Input::Initailze();
-		Time::Initailze();
-		SceneManager::Initialize();
+	void Application::Initialize(HWND hwnd, UINT width, UINT height)
+	{
+		adjustWindowRect(hwnd, width, height);
+		createBuffer(width, height);
+		initializeEtc();
 	}
+
 
 	void Application::Run() {
 		Update();
 		LateUpdate();
 		Render();
-
+		Destroy();
 	}
 
 	void Application::Update() {
-		Time::Update(); // ½Ã°£ Ã³¸®¸¦ ¸Ç ¾Õ¿¡¼­
-		Input::Update(); // Å° Ã³¸®¸¦ ÇÃ·¹ÀÌ¾î Ã³¸®º¸´Ù ºü¸£°Ô
+		Time::Update(); // ì‹œê°„ ì²˜ë¦¬ë¥¼ ë§¨ ì•ì—ì„œ
+		Input::Update(); // í‚¤ ì²˜ë¦¬ë¥¼ í”Œë ˆì´ì–´ ì²˜ë¦¬ë³´ë‹¤ ë¹ ë¥´ê²Œ
 		SceneManager::Update();
-		
 
 	}
 	
@@ -73,7 +53,7 @@ namespace PracticeEngine {
 		Rectangle(mBackHDC, -5, -5, mWidth + 5, mHeight + 5);
 		SceneManager::Render(mBackHDC);
 
-		// BackBuffer¸¦ ¿øº»  Buffer¿¡ º¹»ç
+		// BackBufferë¥¼ ì›ë³¸  Bufferì— ë³µì‚¬
 		BitBlt(mHdc, 0, 0, mWidth, mHeight, mBackHDC, 0, 0, SRCCOPY); 
 		infoTitle();
 	}
@@ -84,6 +64,11 @@ namespace PracticeEngine {
 		Resources::Release();
 	}
 
+	void Application::Destroy()
+	{
+		SceneManager::Destroy();
+	}
+
 	void Application::infoTitle() {
 		float fps = 1.0f / Time::DeltaTime;	
 
@@ -91,6 +76,62 @@ namespace PracticeEngine {
 		swprintf(str, MAX_LOADSTRING, L"%ws \tFPS : %d", title, (int)fps);
 		int len = wcsnlen_s(str, MAX_LOADSTRING);
 
-		SetWindowText(mHwmd, str);
+		SetWindowTextW(mHwmd, str);
+	}
+
+
+	// privateí™•ì¥ì
+
+	void Application::clearRenderTarget()
+	{
+		//clear
+		HBRUSH grayBrush = (HBRUSH)CreateSolidBrush(RGB(128, 128, 128));
+		HBRUSH oldBrush = (HBRUSH)SelectObject(mBackHDC, grayBrush);
+
+		Rectangle(mBackHDC, -1, -1, 1601, 901);
+
+		(HBRUSH)SelectObject(mBackHDC, oldBrush);
+		DeleteObject(grayBrush);
+	}
+
+	void Application::copyRenderTarget(HDC source, HDC dest)
+	{
+		BitBlt(dest, 0, 0, mWidth, mHeight
+			, source, 0, 0, SRCCOPY);
+	}
+
+	void Application::adjustWindowRect(HWND hwnd, UINT width, UINT height)
+	{
+		mHwmd = hwnd;
+		mHdc = GetDC(mHwmd);
+
+		RECT rect = { 0, 0, width, height };
+		AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false); // ìœˆë„ìš° ì‘ì—…ì˜ì—­ì„ Rectë¡œ ë³€ê²½(&RECT, ìœˆë„ìš°ìŠ¤íƒ€ì¼, ë©”ë‰´ë°”)
+
+		mWidth = rect.right - rect.left;
+		mHeight = rect.bottom - rect.top;
+
+		SetWindowPos(mHwmd, nullptr, 0, 0, rect.right - rect.left, rect.bottom - rect.top, 0);
+		ShowWindow(mHwmd, true);
+		GetWindowTextW(mHwmd, title, MAX_LOADSTRING);
+	}
+
+	void Application::createBuffer(UINT width, UINT height)
+	{
+		// ìœˆë„ìš° í•´ìƒë„ì— ë§ëŠ” ë°±ë²„í¼ ìƒì„±
+		mBackBuffer = CreateCompatibleBitmap(mHdc, width, height);
+
+		//ë°±ë²„í¼ ê°€ë¥´í‚¬ dc ìƒì„±
+		mBackHDC = CreateCompatibleDC(mHdc);
+
+		HBITMAP oldBitmap = (HBITMAP)SelectObject(mBackHDC, mBackBuffer); // Bufferì—ë‹¤ê°€ DC ë°”ê¿”ì£¼ê³ 
+		DeleteObject(oldBitmap); // ì´ì „ DCëŠ” ì‚­ì œ
+	}
+
+	void Application::initializeEtc()
+	{
+		Input::Initailze();
+		Time::Initailze();
+		SceneManager::Initialize();
 	}
 }

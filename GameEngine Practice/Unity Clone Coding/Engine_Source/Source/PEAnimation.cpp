@@ -61,23 +61,39 @@ namespace PracticeEngine {
 
 		if (mTexture->GetTextureType() == Graphics::Texture::eTextureType::BMP)
 		{
-			BLENDFUNCTION func = {};
-			func.BlendOp = AC_SRC_OVER;
-			func.BlendFlags = 0;
-			func.AlphaFormat = AC_SRC_ALPHA;
-			func.SourceConstantAlpha = 100;
+			
+			if (mTexture->IsAlpha()) {
+				BLENDFUNCTION func = {};
+				func.BlendOp = AC_SRC_OVER;
+				func.BlendFlags = 0;
+				func.AlphaFormat = AC_SRC_ALPHA;
+				func.SourceConstantAlpha = 255;
 
-			AlphaBlend(hdc,
-				pos.x - (spr.size.x * scl.x * spr.offset.x),
-				pos.y - (spr.size.y * scl.y * spr.offset.y),
-				spr.size.x * scl.x,
-				spr.size.y * scl.y,
-				imgHdc,
-				spr.leftTop.x,
-				spr.leftTop.y,
-				spr.size.x,
-				spr.size.y,
-				func);
+				AlphaBlend(hdc
+					, pos.x - (spr.size.x * scl.x * spr.offset.x)
+					, pos.y - (spr.size.y * scl.y * spr.offset.y)
+					, spr.size.x * scl.x
+					, spr.size.y * scl.y
+					, imgHdc
+					, spr.leftTop.x
+					, spr.leftTop.y
+					, spr.size.x
+					, spr.size.y
+					, func);
+			}
+			else {
+				TransparentBlt(hdc
+					, pos.x - (spr.size.x * scl.x * spr.offset.x)
+					, pos.y - (spr.size.y * scl.y * spr.offset.y)
+					, spr.size.x * scl.x
+					, spr.size.y * scl.y
+					, imgHdc
+					, spr.leftTop.x
+					, spr.leftTop.y
+					, spr.size.x
+					, spr.size.y
+					, RGB(255, 0, 255));
+			}
 		}
 
 		else if (mTexture->GetTextureType() == Graphics::Texture::eTextureType::PNG)

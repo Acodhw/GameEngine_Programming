@@ -89,11 +89,6 @@ namespace PracticeEngine
 		}
 	}
 
-	bool Input::isKeyDown(eKeyCode code)
-	{
-		return GetAsyncKeyState(ASCII[(UINT)code]) & 0x8000;
-	}
-
 	void Input::updateKeyDown(Input::Key& key)
 	{
 		if (key.bPressed == true)

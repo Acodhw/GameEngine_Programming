@@ -31,7 +31,7 @@ namespace PracticeEngine {
     {
         Scene::Render(hdc);
         wchar_t str[50] = L"Title";
-        TextOut(hdc, 50, 50, str, wcslen(str));
+        TextOutW(hdc, 50, 50, str, wcslen(str));
     }
 
     void TitleScene::OnEnter()

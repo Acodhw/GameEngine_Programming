@@ -46,6 +46,12 @@ namespace PracticeEngine{
 			UINT spriteLength,
 			float duration);
 
+		// 폴더 내부의 이미지를 이용해 애니메이션을 생성합니다
+		void CreateAnimationByFolder(const std::wstring& name,
+			const std::wstring& path,
+			Vector2 offset,
+			float duration);
+
 		// 애니메이션 목록에서 애니메이션을 찾습니다
 		Animation* FindAnimation(const std::wstring& name);
 

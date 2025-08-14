@@ -2,6 +2,7 @@
 #include "PEScene.h"
 
 namespace PracticeEngine {
+	class Scene;
 	// 여러 씬들을 관리하는 클래스
 	class SceneManager
 	{
@@ -42,6 +43,7 @@ namespace PracticeEngine {
 		static void LateUpdate();
 		static void Render(HDC hdc);
 		static void Release();
+		static void Destroy();
 
 	private:
 		static std::map<std::wstring, Scene*> mScene; // 씬 메니저에 로드 된 씬 종류

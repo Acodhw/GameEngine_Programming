@@ -12,6 +12,9 @@ namespace PracticeEngine {
 				PNG,
 				None,
 			};
+			
+			static Texture* Create(const std::wstring& name, UINT width, UINT height);
+			
 			Texture();
 			~Texture();
 
@@ -20,11 +23,15 @@ namespace PracticeEngine {
 			const UINT& width = mWidth;
 			const UINT& height = mHeight;
 
+			void SetWidth(UINT width) { mWidth = width; }
+			void SetHeight(UINT height) { mHeight = height; }
 			HDC GetHdc() { return mHdc; }
 			eTextureType GetTextureType() { return mT_Type; }
 			Gdiplus::Image* GetImage() { return mImage; }
+			bool IsAlpha() { return mbAlpha; }
 
 		private:
+			bool mbAlpha;
 			Gdiplus::Image* mImage; // 그려질 이미지
 			HBITMAP mBitmap; // 비트맵 파일 가져올때
 			HDC mHdc;

@@ -10,6 +10,8 @@
 #include "PECamera.h"
 #include "PERenderer.h"
 #include "PEAnimator.h"
+#include "PEBoxCollider2D.h"
+#include "PECircleCollider2D.h"
 
 
 namespace PracticeEngine {
@@ -36,8 +38,12 @@ namespace PracticeEngine {
             (eLayerType::Player, Vector2(100.0f, 100.0f));
         Graphics::Texture* tex = Resources::Find<Graphics::Texture>(L"PL_S");
         pl->AddComponent<PlayerScript>();
-        pl->GetComponent<Transform>()->SetRot(75);
-        pl->GetComponent<Transform>()->SetScl(Vector2::One * 3);
+        BoxCollider2D* bcol = pl->AddComponent<BoxCollider2D>();
+        bcol->SetSize(Vector2(0.5,1));
+        bcol->SetOffset(Vector2::Up * 50 + Vector2::Left * 25);
+        CircleCollider2D* ccol = pl->AddComponent<CircleCollider2D>();
+        ccol->SetSize(Vector2::One * 0.5f);
+        ccol->SetOffset(Vector2::Up * 75 + Vector2::Left * 25);
         cComp->SetTarger(pl);
 
         Animator* animator = pl->AddComponent<Animator>();

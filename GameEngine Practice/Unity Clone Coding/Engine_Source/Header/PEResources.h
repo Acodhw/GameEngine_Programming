@@ -23,7 +23,7 @@ namespace PracticeEngine {
 
 			resource = new T();
 			if (FAILED(resource->Load(path))) {
-				MessageBox(nullptr, (L"Resource Error!\nCheck the Path\n" + path).c_str(), L"Error!", MB_OK);
+				MessageBoxW(nullptr, (L"Resource Error!\nCheck the Path\n" + path).c_str(), L"Error!", MB_OK);
 				assert(false);
 			}
 			
@@ -34,6 +34,16 @@ namespace PracticeEngine {
 			return resource;
 		}
 
+		static void Insert(const std::wstring& key, Resource* resource)
+		{
+			if (key == L"")
+				return;
+			if (resource == nullptr)
+				return;
+
+			mResources.insert(std::make_pair(key, resource));
+		}
+
 		static void Release()
 		{
 			for (auto& iter : mResources)
@@ -42,6 +52,8 @@ namespace PracticeEngine {
 				iter.second = nullptr;
 			}
 		}
+
+
 
 	private:
 		static std::map<std::wstring, Resource*> mResources; // 현재 리소스 목록입니다

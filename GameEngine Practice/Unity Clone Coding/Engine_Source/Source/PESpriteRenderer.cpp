@@ -18,7 +18,7 @@ namespace PracticeEngine {
 	void SpriteRenderer::Render(HDC hdc) {
 
 		if (mTexture == nullptr) {
-			MessageBox(nullptr, L"Texture Loading Error!\nTexture is Empty!", L"Error!", MB_OK);
+			MessageBoxW(nullptr, L"Texture Loading Error!\nTexture is Empty!", L"Error!", MB_OK);
 			assert(false);
 		}
 

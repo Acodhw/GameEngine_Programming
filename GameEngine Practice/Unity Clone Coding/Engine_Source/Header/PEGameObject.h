@@ -8,6 +8,13 @@ namespace PracticeEngine
 	class GameObject
 	{
 	public:
+		enum eState {
+			Active,
+			Paused,
+			Dead,
+			End,
+		};
+
 		GameObject();
 		~GameObject();
 
@@ -43,11 +50,23 @@ namespace PracticeEngine
 			return component;
 		} 
 
+		// 오브젝트의 활성 상태를 지정합니다
+		void SetActive(bool power) {
+			mState = power ? eState::Active : eState::Paused;
+		}
+
+		// 오브젝트의 활성 상태를 가져옵니다
+		const eState& state = mState;
+
+		// 오브젝트를 죽입니다(사용 불능으로 만들기)
+		void Death() { mState = eState::Dead; }
 	private:
 		// 게임 오브젝트의 기본 Transform 컴포넌트를 대입합니다
 		void initializeTransform();
+		
 
 	private:
+		eState mState; // 오브젝트의 활성 상태
 		std::vector<Component*> mComponents; //이 게임 오브젝트가 가지고 있는 컴포넌트 리스트
 	};
 }

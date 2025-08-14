@@ -4,6 +4,7 @@
 #include "PELayer.h"
 
 namespace PracticeEngine {
+	class Layer;
 	// 게임의 오브젝트가 담긴 장면을 제공하는 클래스
 	class Scene : public Entity
 	{
@@ -20,10 +21,13 @@ namespace PracticeEngine {
 		virtual void OnEnter();
 		//씬에서 나가는 순간 실행되는 함수
 		virtual void OnExit();
+		virtual void Destroy();
 
 		// 레이어에 게임오브젝트를 배치합니다
 		void AddGameObject(GameObject* go, eLayerType layer);
+		// 레이어를 구합니다
 		Layer* GetLayer(const eLayerType layer) { return mLayers[(UINT)layer]; }
+
 
 	private:
 		// 레이어를 생성합니다

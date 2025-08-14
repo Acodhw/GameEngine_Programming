@@ -2,11 +2,14 @@
 
 // 기본 라이브러리
 #include <Windows.h>
+#include <iostream>
 #include <vector>
 #include <algorithm>
 #include <string>
 #include <map>
+#include<bitset>
 #include <functional>
+#include <filesystem>
 
 #include <cassert>
 #include <mmsystem.h>

@@ -6,6 +6,7 @@
 namespace PracticeEngine
 {
 	GameObject::GameObject()
+		: mState(eState::Active)
 	{
 		mComponents.resize((UINT)eComponentType::End);
 		initializeTransform();
