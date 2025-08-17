@@ -1,22 +1,43 @@
-﻿#include "PESpriteRenderer.h"
+#include "PETileMapRenderer.h"
 #include "PETransform.h"
-#include "PEGameObject.h"
 #include "PERenderer.h"
-#include "PECamera.h"
+#include "PEGameObject.h"
 
 namespace PracticeEngine {
-	SpriteRenderer::SpriteRenderer()
+
+	Vector2 TileMapRenderer::TileSize = Vector2::One;
+	Vector2 TileMapRenderer::OriginTileSize = Vector2::One;
+	Vector2 TileMapRenderer::SelectedIndex = Vector2(-1.0f, -1.0f);
+
+	TileMapRenderer::TileMapRenderer()
 		: Component(eComponentType::SpriteRenderer)
-		,mTexture(nullptr)
+		, mTexture(nullptr)
 		, mSize(Vector2::One)
-	{}
-	SpriteRenderer::~SpriteRenderer(){}
+		, mIndex(1, 1)
+		, mTileSize(32.0f, 32.0f)
+	{
+		TileSize = mTileSize * mSize;
+		OriginTileSize = mTileSize;
+	}
+	TileMapRenderer::~TileMapRenderer()
+	{
+	}
+	void TileMapRenderer::Initialize()
+	{
 
-	void SpriteRenderer::Initialize() {}
-	void SpriteRenderer::Update() {}
-	void SpriteRenderer::LateUpdate() {}
-	void SpriteRenderer::Render(HDC hdc) {
 
+	}
+	void TileMapRenderer::Update()
+	{
+
+	}
+
+	void TileMapRenderer::LateUpdate()
+	{
+	}
+
+	void TileMapRenderer::Render(HDC hdc)
+	{
 		if (mTexture == nullptr) {
 			MessageBox(nullptr, L"Texture Loading Error!\nTexture is Empty!", L"Error!", MB_OK);
 			assert(false);
@@ -44,24 +65,24 @@ namespace PracticeEngine {
 				AlphaBlend(hdc
 					, pos.x
 					, pos.y
-					, mTexture->width * mSize.x * scl.x
-					, mTexture->height * mSize.y * scl.y
+					, mTileSize.x * mSize.x * scl.x
+					, mTileSize.y * mSize.y * scl.y
 					, mTexture->GetHdc()
-					, 0, 0
-					, mTexture->width
-					, mTexture->height
+					, mIndex.x * mTileSize.x, mIndex.y * mTileSize.y
+					, mTileSize.x
+					, mTileSize.y
 					, func);
 			}
 			else
 			{
 				TransparentBlt(hdc
 					, pos.x, pos.y
-					, mTexture->width * mSize.x * scl.x
-					, mTexture->height * mSize.y * scl.y
+					, mTileSize.x * mSize.x * scl.x
+					, mTileSize.y * mSize.y * scl.y
 					, mTexture->GetHdc()
-					, 0, 0
-					, mTexture->width
-					, mTexture->height
+					, mIndex.x * mTileSize.x, mIndex.y * mTileSize.y
+					, mTileSize.x
+					, mTileSize.y
 					, RGB(255, 0, 255));
 			}
 			break;
@@ -77,17 +98,16 @@ namespace PracticeEngine {
 				, Gdiplus::Rect
 				(
 					pos.x, pos.y
-					, mTexture->width * mSize.x * scl.x
-					, mTexture->height * mSize.y * scl.y
+					, mTileSize.x * mSize.x * scl.x
+					, mTileSize.y * mSize.y * scl.y
 				)
-				, 0, 0
-				, mTexture->width, mTexture->height
+				, mIndex.x * mTileSize.x, mIndex.y * mTileSize.y
+				, mTileSize.x
+				, mTileSize.y
 				, Gdiplus::UnitPixel
 				, nullptr);
 			break;
 		}
+
 	}
-
-	
 }
-

@@ -54,9 +54,15 @@ namespace PracticeEngine
 		void SetActive(bool power) {
 			mState = power ? eState::Active : eState::Paused;
 		}
-
+		// 오브젝트의 활성 상태를 체크합니다
+		bool IsActive() { return mState == eState::Active; }
+		// 오브젝트가 죽은 상태인지 확인합니다
+		bool IsDead() { return mState == eState::Dead; }
 		// 오브젝트의 활성 상태를 가져옵니다
 		const eState& state = mState;
+
+		void SetLayerType(eLayerType layerType) { mLayerType = layerType; }
+		eLayerType GetLayerType() { return mLayerType; }
 
 		// 오브젝트를 죽입니다(사용 불능으로 만들기)
 		void Death() { mState = eState::Dead; }
@@ -68,5 +74,6 @@ namespace PracticeEngine
 	private:
 		eState mState; // 오브젝트의 활성 상태
 		std::vector<Component*> mComponents; //이 게임 오브젝트가 가지고 있는 컴포넌트 리스트
+		eLayerType mLayerType; // 이 오브젝트의 레이어
 	};
 }

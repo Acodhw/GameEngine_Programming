@@ -76,7 +76,7 @@ namespace PracticeEngine {
 		swprintf(str, MAX_LOADSTRING, L"%ws \tFPS : %d", title, (int)fps);
 		int len = wcsnlen_s(str, MAX_LOADSTRING);
 
-		SetWindowTextW(mHwmd, str);
+		SetWindowText(mHwmd, str);
 	}
 
 
@@ -113,7 +113,7 @@ namespace PracticeEngine {
 
 		SetWindowPos(mHwmd, nullptr, 0, 0, rect.right - rect.left, rect.bottom - rect.top, 0);
 		ShowWindow(mHwmd, true);
-		GetWindowTextW(mHwmd, title, MAX_LOADSTRING);
+		GetWindowText(mHwmd, title, MAX_LOADSTRING);
 	}
 
 	void Application::createBuffer(UINT width, UINT height)

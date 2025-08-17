@@ -37,6 +37,8 @@ namespace PracticeEngine {
 		}
 		// 현재 작동중인 씬을 가져옵니다
 		static Scene* GetActiveScene() { return mActiveScene; }
+		// 게임이 진행되는 동안 계속 실행되는 씬을 가져옵니다
+		static Scene* GetDontDestroyOnLoad() { return mDontDestroyOnLoad; }
 
 		static void Initialize();
 		static void Update();
@@ -48,6 +50,7 @@ namespace PracticeEngine {
 	private:
 		static std::map<std::wstring, Scene*> mScene; // 씬 메니저에 로드 된 씬 종류
 		static Scene* mActiveScene; // 현재 활성화된 씬
+		static Scene* mDontDestroyOnLoad; // 삭제되지 않는 씬
 	};
 }
 

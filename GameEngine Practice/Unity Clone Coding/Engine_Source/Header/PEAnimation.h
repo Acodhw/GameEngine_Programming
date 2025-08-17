@@ -3,6 +3,7 @@
 #include "PETexture.h"
 
 namespace PracticeEngine {
+    // 애니메이션을 지정하는 리소스
     class Animation : public Resource
     {
     public:

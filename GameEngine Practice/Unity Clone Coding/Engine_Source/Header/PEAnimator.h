@@ -4,7 +4,7 @@
 
 namespace PracticeEngine{
 	
-
+	// 애니메이션들에 전환을 관리하는 컴포넌트
 	class Animator : public Component
 	{
 	public :

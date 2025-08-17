@@ -14,9 +14,10 @@ namespace PracticeEngine
 	enum class eLayerType {
 		None,
 		BackGround,
+		Tile,
 		//레이어 추가
 		Player,
-		particle,
+		Particle,
 		Max = 16,
 	};
 

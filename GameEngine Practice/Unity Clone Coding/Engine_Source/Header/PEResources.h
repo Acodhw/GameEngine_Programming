@@ -2,6 +2,7 @@
 #include "PEResource.h"
 
 namespace PracticeEngine {
+	// 리소스를 로드하고 저장하는 클래스
 	class Resources 
 	{
 	public:
@@ -23,7 +24,7 @@ namespace PracticeEngine {
 
 			resource = new T();
 			if (FAILED(resource->Load(path))) {
-				MessageBoxW(nullptr, (L"Resource Error!\nCheck the Path\n" + path).c_str(), L"Error!", MB_OK);
+				MessageBox(nullptr, (L"Resource Error!\nCheck the Path\n" + path).c_str(), L"Error!", MB_OK);
 				assert(false);
 			}
 			

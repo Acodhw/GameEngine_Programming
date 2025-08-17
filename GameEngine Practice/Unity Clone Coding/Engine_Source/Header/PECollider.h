@@ -2,6 +2,7 @@
 #include "PEComponent.h"
 
 namespace PracticeEngine {
+	//충돌 판정을 체크하는 컴포넌트
 	class Collider : public Component
 	{
 	public:

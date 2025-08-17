@@ -41,6 +41,10 @@ namespace PracticeEngine::Math {
 			Vector2 tmp(x - vec.x, y - vec.y);
 			return tmp;
 		}
+		Vector2 operator*(const Vector2& vec)
+		{
+			return Vector2(x * vec.x, y * vec.y);
+		}
 		Vector2 operator*(float n) {
 			Vector2 tmp(x * n, y * n);
 			return tmp;

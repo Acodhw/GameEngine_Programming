@@ -9,7 +9,7 @@ namespace PracticeEngine {
 	Camera::Camera()
 		:Component(eComponentType::Camera)
 		, mDistance(Vector2::Zero)
-		, mResolution(Vector2(1600, 900))
+		, mResolution(Vector2::Zero)
 		, mLookPosition(Vector2::Zero)
 		, mTarget(nullptr)
 	{

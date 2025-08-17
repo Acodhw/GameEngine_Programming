@@ -56,4 +56,12 @@ namespace PracticeEngine::Object {
 	static void Destroy(PracticeEngine::GameObject* obj) {
 		obj->Death();
 	}
+
+	static void DontDestroyOnLoad(GameObject* gameObject)
+	{
+		Scene* activeScene = SceneManager::GetActiveScene();
+		activeScene->EraseGameObject(gameObject);
+		Scene* dontDestroyOnLoad = SceneManager::GetDontDestroyOnLoad();
+		dontDestroyOnLoad->AddGameObject(gameObject, gameObject->GetLayerType());
+	}
 }

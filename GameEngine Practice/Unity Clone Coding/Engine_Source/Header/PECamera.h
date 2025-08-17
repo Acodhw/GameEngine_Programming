@@ -4,7 +4,7 @@
 namespace PracticeEngine {
 
 	using namespace Math;
-
+	// 카메라 컴포넌트
     class Camera : public Component
     {
 	public:

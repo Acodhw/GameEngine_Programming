@@ -1,4 +1,5 @@
 #include "PELayer.h"
+#include <algorithm>
 
 namespace PracticeEngine
 {
@@ -67,5 +68,43 @@ namespace PracticeEngine
 
 			iter++;
 		}
+	}
+
+	void Layer::EraseGameObject(GameObject* eraseGameObj)
+	{
+		// std::erase() iter넣어줘서 해당 이터레이와 같은 객체 삭제
+		std::erase_if(mGameObjects,
+			[=](GameObject* gameObj)
+			{
+				return gameObj == eraseGameObj;
+			});
+	}
+
+	void Layer::findDeadGameObjects(OUT std::vector<GameObject*>& gameObjs)
+	{
+		for (GameObject* gameObj : mGameObjects)
+		{
+			GameObject::eState active = gameObj->state;
+			if (active == GameObject::eState::Dead)
+				gameObjs.push_back(gameObj);
+		}
+	}
+
+	void Layer::deleteGameObjects(std::vector<GameObject*> deleteObjs)
+	{
+		for (GameObject* obj : deleteObjs)
+		{
+			delete obj;
+			obj = nullptr;
+		}
+	}
+
+	void Layer::eraseDeadGameObject()
+	{
+		std::erase_if(mGameObjects,
+			[](GameObject* gameObj)
+			{
+				return (gameObj)->IsDead();
+			});
 	}
 }

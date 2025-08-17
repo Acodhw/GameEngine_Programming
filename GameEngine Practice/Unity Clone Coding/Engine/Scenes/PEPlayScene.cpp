@@ -12,7 +12,9 @@
 #include "PEAnimator.h"
 #include "PEBoxCollider2D.h"
 #include "PECircleCollider2D.h"
-
+#include "PETile.h"
+#include "PETileMapRenderer.h"
+#include <io.h> // for _access
 
 namespace PracticeEngine {
     PlayScene::PlayScene()
@@ -25,6 +27,34 @@ namespace PracticeEngine {
     void PlayScene::Initialize()
     {
         Scene::Initialize();
+
+        FILE* pFile = nullptr;
+        _wfopen_s(&pFile, L"..\\Resources\\Test.tile", L"rb");
+        if (pFile) {
+            while (true)
+            {
+                int idxX = 0;
+                int idxY = 0;
+
+                int posX = 0;
+                int posY = 0;
+
+                if (fread(&idxX, sizeof(int), 1, pFile) == NULL)
+                    break;
+                if (fread(&idxY, sizeof(int), 1, pFile) == NULL)
+                    break;
+                if (fread(&posX, sizeof(int), 1, pFile) == NULL)
+                    break;
+                if (fread(&posY, sizeof(int), 1, pFile) == NULL)
+                    break;
+
+                Tile* tile = Object::Instantiate<Tile>(eLayerType::Tile, Vector2(posX, posY));
+                TileMapRenderer* tmr = tile->AddComponent<TileMapRenderer>();
+                tmr->SetTexture(Resources::Find<Graphics::Texture>(L"TL"));
+                tmr->SetIndex(Vector2(idxX, idxY));
+
+            }
+        }
 
         // 메인카메라
         GameObject* camera = Object::Instantiate<GameObject>(eLayerType::None, Vector2(0, 0));
@@ -52,7 +82,7 @@ namespace PracticeEngine {
         animator->PlayAnimation(L"idle", true);         
 
         GameObject* bg2 = Object::Instantiate<SpriteObj>
-            (eLayerType::BackGround, Vector2(750, 520));
+            (eLayerType::BackGround, Vector2(0, 0));
         SpriteRenderer* sr2 = bg2->AddComponent<SpriteRenderer>();
         tex = Resources::Find<Graphics::Texture>(L"BG");
         sr2->SetTexture(tex);

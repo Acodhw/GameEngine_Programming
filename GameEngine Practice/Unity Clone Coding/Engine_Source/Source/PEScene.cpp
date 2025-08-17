@@ -1,4 +1,6 @@
 #include "PEScene.h"
+#include "PELayer.h"
+#include "PEGameObject.h"
 
 namespace PracticeEngine {
 	Scene::Scene() : mLayers{}
@@ -56,6 +58,12 @@ namespace PracticeEngine {
 
 	void Scene::AddGameObject(GameObject* go, eLayerType layer) {
 		mLayers[(UINT)layer]->AddGameObject(go);
+	}
+
+	void Scene::EraseGameObject(GameObject* gameObj)
+	{
+		eLayerType layerType = gameObj->GetLayerType();
+		mLayers[(UINT)layerType]->EraseGameObject(gameObj);
 	}
 
 	void Scene::createLayers()

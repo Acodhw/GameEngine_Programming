@@ -25,6 +25,8 @@ namespace PracticeEngine {
 
 		// 레이어에 게임오브젝트를 배치합니다
 		void AddGameObject(GameObject* go, eLayerType layer);
+		// 게임 오브젝트를 삭제
+		void EraseGameObject(GameObject* gameObj);
 		// 레이어를 구합니다
 		Layer* GetLayer(const eLayerType layer) { return mLayers[(UINT)layer]; }
 
