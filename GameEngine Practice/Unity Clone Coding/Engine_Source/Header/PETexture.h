@@ -20,6 +20,7 @@ namespace PracticeEngine::Graphics {
 		~Texture();
 
 		HRESULT Load(const std::wstring& path) override;
+		COLORREF GetPixel(int x, int y);
 
 		const UINT& width = mWidth;
 		const UINT& height = mHeight;

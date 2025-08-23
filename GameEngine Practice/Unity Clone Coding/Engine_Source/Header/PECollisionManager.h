@@ -22,6 +22,7 @@ namespace PracticeEngine {
 		static void Update();
 		static void LateUpdate();
 		static void Render(HDC hdc);
+		static void Clear();
 
 		// 레이어에 따른 충돌 판정을 체크합니다
 		static void CollisionLayerCheck(eLayerType left, eLayerType right, bool enable);

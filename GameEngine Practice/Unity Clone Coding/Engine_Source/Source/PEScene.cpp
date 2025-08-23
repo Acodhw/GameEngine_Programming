@@ -1,6 +1,7 @@
 #include "PEScene.h"
 #include "PELayer.h"
 #include "PEGameObject.h"
+#include "PECollisionManager.h"
 
 namespace PracticeEngine {
 	Scene::Scene() : mLayers{}
@@ -53,7 +54,7 @@ namespace PracticeEngine {
 
 	void Scene::OnExit()
 	{
-
+		CollisionManager::Clear();
 	}
 
 	void Scene::AddGameObject(GameObject* go, eLayerType layer) {

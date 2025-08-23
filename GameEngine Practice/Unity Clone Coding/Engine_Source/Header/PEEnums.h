@@ -3,12 +3,15 @@
 namespace PracticeEngine
 {
 	enum class eComponentType {
-		Transform,
+		Transform, 
+		Collider,
+		Rigidbody,
 		SpriteRenderer,
 		Script,
 		Camera,
 		Animator,
-		Collider,
+		AudioListener,
+		AudioSource,
 		End
 	};
 	enum class eLayerType {
@@ -35,6 +38,12 @@ namespace PracticeEngine
 	{
 		Circle2D,
 		Rect2D,
+		End,
+	};
+
+	enum class eUIType {
+		Slider,
+		Button,
 		End,
 	};
 }

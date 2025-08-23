@@ -1,19 +1,17 @@
 #pragma once
-#include "PECollider.h"
-
-namespace PracticeEngine {
-    class BoxCollider2D : public Collider
+#include "PEComponent.h"
+namespace PracticeEngine
+{
+    class AudioListener : public Component
     {
 	public:
-		BoxCollider2D();
-		~BoxCollider2D();
+		AudioListener();
+		~AudioListener();
 
 		void Initialize() override;
 		void Update() override;
 		void LateUpdate() override;
 		void Render(HDC hdc) override;
-
-	private:
     };
 }
 

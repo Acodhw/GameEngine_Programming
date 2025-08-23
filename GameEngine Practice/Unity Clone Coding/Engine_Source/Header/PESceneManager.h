@@ -39,7 +39,7 @@ namespace PracticeEngine {
 		static Scene* GetActiveScene() { return mActiveScene; }
 		// 게임이 진행되는 동안 계속 실행되는 씬을 가져옵니다
 		static Scene* GetDontDestroyOnLoad() { return mDontDestroyOnLoad; }
-
+		static std::vector<GameObject*> GetGameObjects(eLayerType layer);
 		static void Initialize();
 		static void Update();
 		static void LateUpdate();

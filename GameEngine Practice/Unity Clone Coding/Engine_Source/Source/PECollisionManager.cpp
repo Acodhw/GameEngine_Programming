@@ -9,8 +9,8 @@
 
 namespace PracticeEngine{
 
-	std::bitset <(UINT)eLayerType::Max> mCollisionLayerMatrix[(UINT)eLayerType::Max] = {};
-	std::unordered_map<UINT64, bool> mCollisionMap = {};
+	std::bitset <(UINT)eLayerType::Max> CollisionManager::mCollisionLayerMatrix[(UINT)eLayerType::Max] = {};
+	std::unordered_map<UINT64, bool> CollisionManager::mCollisionMap = {};
 
 	void CollisionManager::Initialize() 
 	{
@@ -41,6 +41,12 @@ namespace PracticeEngine{
 	
 	}
 
+	void CollisionManager::Clear()
+	{
+		mCollisionMap.clear();
+		mCollisionLayerMatrix->reset();
+	}
+
 	void CollisionManager::CollisionLayerCheck(eLayerType left, eLayerType right, bool enable)
 	{
 		int row = 0, col = 0;
@@ -55,8 +61,8 @@ namespace PracticeEngine{
 		mCollisionLayerMatrix[row][col] = enable;
 	}
 	void CollisionManager::LayerCollision(class Scene* scene, eLayerType left, eLayerType right) {
-		const std::vector<GameObject*>& lefts = scene->GetLayer(left)->GetGameObjects();
-		const std::vector<GameObject*>& rights = scene->GetLayer(right)->GetGameObjects();
+		const std::vector<GameObject*>& lefts = SceneManager::GetGameObjects(left);
+		const std::vector<GameObject*>& rights = SceneManager::GetGameObjects(right); 
 
 		for (GameObject* left : lefts)
 		{

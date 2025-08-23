@@ -14,6 +14,7 @@
 #include "PECircleCollider2D.h"
 #include "PETile.h"
 #include "PETileMapRenderer.h"
+#include "PECollisionManager.h"
 #include <io.h> // for _access
 
 namespace PracticeEngine {
