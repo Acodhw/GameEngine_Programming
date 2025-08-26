@@ -3,6 +3,9 @@
 #include "PETime.h"
 #include "PESceneManager.h"
 #include "PEResources.h"
+#include "PEFmod.h"
+#include "PECollisionManager.h"
+#include "PEUIManager.h"
 
 #define MAX_LOADSTRING 100
 
@@ -28,6 +31,14 @@ namespace PracticeEngine {
 		adjustWindowRect(hwnd, width, height);
 		createBuffer(width, height);
 		initializeEtc();
+
+		mGraphicDevice = std::make_unique<Graphics::GraphicsDevice_DX11>();
+		mGraphicDevice->Initialize();
+
+		Fmod::Initialize();
+		CollisionManager::Initialize();
+		UIManager::Initialize();
+		SceneManager::Initialize();
 	}
 
 
@@ -50,11 +61,11 @@ namespace PracticeEngine {
 	}
 
 	void Application::Render() {
-		::Rectangle(mBackHDC, -5, -5, mWidth + 5, mHeight + 5);
+		mGraphicDevice->Draw();
+		
 		SceneManager::Render(mBackHDC);
-
-		// BackBuffer를 원본  Buffer에 복사
-		BitBlt(mHdc, 0, 0, mWidth, mHeight, mBackHDC, 0, 0, SRCCOPY); 
+		UIManager::Render(mBackHDC);
+		CollisionManager::Render(mBackHDC);
 		infoTitle();
 	}
 

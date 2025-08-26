@@ -1,6 +1,7 @@
 #pragma once
 #include "CommonInclude.h"
 #include "PEGameObject.h"
+#include "PEGraphicsDevice_DX11.h"
 
 namespace PracticeEngine {
 	// 애플리케이션 기본 클래스
@@ -37,6 +38,9 @@ namespace PracticeEngine {
 		void createBuffer(UINT width, UINT height);
 		void initializeEtc();
 	private:
+
+		std::unique_ptr<Graphics::GraphicsDevice_DX11> mGraphicDevice; // 그래픽 디바이스
+
 		HWND mHwmd; // 맴버 변수 핸들
 		HDC mHdc; // hdc 가져옴
 
