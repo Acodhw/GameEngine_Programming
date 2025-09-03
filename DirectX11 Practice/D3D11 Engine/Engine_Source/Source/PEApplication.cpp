@@ -6,6 +6,7 @@
 #include "PEFmod.h"
 #include "PECollisionManager.h"
 #include "PEUIManager.h"
+#include "PERenderer.h"
 
 #define MAX_LOADSTRING 100
 
@@ -33,12 +34,14 @@ namespace PracticeEngine {
 		initializeEtc();
 
 		mGraphicDevice = std::make_unique<Graphics::GraphicsDevice_DX11>();
+		Renderer::Initialize();
 		mGraphicDevice->Initialize();
 
-		Fmod::Initialize();
+		Fmod::Initialize();		
 		CollisionManager::Initialize();
 		UIManager::Initialize();
 		SceneManager::Initialize();
+		
 	}
 
 
@@ -72,7 +75,10 @@ namespace PracticeEngine {
 	void Application::Release()
 	{
 		SceneManager::Release();
+		UIManager::Release();
 		Resources::Release();
+
+		Renderer::Release();
 	}
 
 	void Application::Destroy()

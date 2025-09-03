@@ -5,75 +5,239 @@
 extern PracticeEngine::Application application;
 
 namespace PracticeEngine::Graphics {
-	GraphicsDevice_DX11::GraphicsDevice_DX11() {
-
-	}
-	GraphicsDevice_DX11::~GraphicsDevice_DX11() {
-
+	GraphicsDevice_DX11::GraphicsDevice_DX11()
+	{
+		PracticeEngine::Graphics::GetDevice() = this;
 	}
 
-	void GraphicsDevice_DX11::Initialize() {
-		D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 }; // 다렉 버전 세팅
-		UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT; // 디바이스 플래그
+	GraphicsDevice_DX11::~GraphicsDevice_DX11()
+	{
 
-#if defined(DEBUG) || defined(_DEBUG) // |을 2번 하면 오류나므로 1번만 하도록 지정
-		creationFlags |= D3D11_CREATE_DEVICE_DEBUG; // 플래그에 디버그 상태를 추가
+	}
+
+	bool GraphicsDevice_DX11::CreateDevice()
+	{
+		D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
+		UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+#if defined(DEBUG) || defined(_DEBUG)
+		creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
 		HRESULT hr = D3D11CreateDevice(0, D3D_DRIVER_TYPE_HARDWARE,
 			0, creationFlags,
 			featureLevels, ARRAYSIZE(featureLevels),
 			D3D11_SDK_VERSION, mDevice.GetAddressOf(),
-			0, mContext.GetAddressOf()); // 디바이스 추가
+			0, mContext.GetAddressOf());
 
-		DXGI_SWAP_CHAIN_DESC swapChainDesc = {}; // 스왑체인 관련 정보 저장
+		return true;
+	}
 
-		swapChainDesc.OutputWindow = application.GetHWND(); // 그려줄 윈도우 지정
-		swapChainDesc.Windowed = true; // 창 모드에서 실행되는지 여부
-		swapChainDesc.BufferCount = 2; // 총 버퍼 개수
-		swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD; // 이전 프레임 장면을 유지하지 않는다.
-
-		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 버퍼 사용 이유
-		swapChainDesc.BufferDesc.Width = application.GetResolution().x; // 해상도
-		swapChainDesc.BufferDesc.Height = application.GetResolution().y;
-		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 버퍼 색상 포맷
-		swapChainDesc.BufferDesc.RefreshRate.Numerator = 144; // 최대 프레임
-		swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
-		swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED; // 스케일링 세팅
-		swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-
-		// 4X MSAA surported check
-		UINT quility = 0;
-		mDevice->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &quility); // quility > 0이면 MSAA 지원
-		//if (quility > 0)
-		//{
-		//	swapChainDesc.SampleDesc.Count = 4; // how many multisamples
-		//	swapChainDesc.SampleDesc.Quality = quility - 1;
-		//}
-
-		swapChainDesc.SampleDesc.Count = 1; // how many multisamples
-		swapChainDesc.SampleDesc.Quality = 0;
-
+	bool GraphicsDevice_DX11::CreateSwapchain(DXGI_SWAP_CHAIN_DESC desc)
+	{
 		Microsoft::WRL::ComPtr<IDXGIDevice>     pDXGIDevice = nullptr;
 		Microsoft::WRL::ComPtr<IDXGIAdapter>    pAdapter = nullptr;
 		Microsoft::WRL::ComPtr<IDXGIFactory>    pFactory = nullptr;
 
 		if (FAILED(mDevice->QueryInterface(__uuidof(IDXGIDevice), (void**)pDXGIDevice.GetAddressOf())))
-			return;
+			return false;
 
 		if (FAILED(pDXGIDevice->GetParent(__uuidof(IDXGIAdapter), (void**)pAdapter.GetAddressOf())))
-			return;
+			return false;
 
 		if (FAILED(pAdapter->GetParent(__uuidof(IDXGIFactory), (void**)pFactory.GetAddressOf())))
-			return;
+			return false;
 
-		if (FAILED(pFactory->CreateSwapChain(mDevice.Get(), &swapChainDesc, mSwapChain.GetAddressOf())))
-			return;
+		if (FAILED(pFactory->CreateSwapChain(mDevice.Get(), &desc, mSwapChain.GetAddressOf())))
+			return false;
 
-		mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)mRenderTarget.GetAddressOf());
-		mDevice->CreateRenderTargetView(mRenderTarget.Get(), nullptr, mRenderTargetView.GetAddressOf());
+		return true;
+	}
 
+	bool GraphicsDevice_DX11::GetBuffer(UINT Buffer, REFIID riid, void** ppSurface)
+	{
+		if (FAILED(mSwapChain->GetBuffer(Buffer, riid, ppSurface)))
+			return false;
+
+		return true;
+	}
+
+	bool GraphicsDevice_DX11::CreateRenderTargetView(ID3D11Resource* pResource, const D3D11_RENDER_TARGET_VIEW_DESC* pDesc, ID3D11RenderTargetView** ppRTView)
+	{
+		if (FAILED(mDevice->CreateRenderTargetView(pResource, pDesc, ppRTView)))
+			return false;
+
+		return true;
+	}
+
+	bool GraphicsDevice_DX11::CreateDepthStencilView(ID3D11Resource* pResource, const D3D11_DEPTH_STENCIL_VIEW_DESC* pDesc, ID3D11DepthStencilView** ppDepthStencilView)
+	{
+		if (FAILED(mDevice->CreateDepthStencilView(pResource, pDesc, ppDepthStencilView)))
+			return false;
+
+		return true;
+	}
+
+	bool GraphicsDevice_DX11::CreateTexture2D(const D3D11_TEXTURE2D_DESC* pDesc, const D3D11_SUBRESOURCE_DATA* pInitialData, ID3D11Texture2D** ppTexture2D)
+	{
+		if (FAILED(mDevice->CreateTexture2D(pDesc, pInitialData, ppTexture2D)))
+			return false;
+
+		return true;
+	}
+
+	bool GraphicsDevice_DX11::CreateVertexShader(const std::wstring& fileName, ID3DBlob** ppCode, ID3D11VertexShader** ppVertexShader)
+	{
+		DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+		shaderFlags |= D3DCOMPILE_DEBUG;
+		shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
+
+		ID3DBlob* errorBlob = nullptr;
+		const std::wstring shaderFilePath = L"..\\Shader_SOURCE\\";
+		D3DCompileFromFile((shaderFilePath + fileName).c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+			, "main", "vs_5_0", shaderFlags, 0, ppCode, &errorBlob);
+
+		if (errorBlob)
+		{
+			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+			errorBlob->Release();
+			assert(NULL && "hlsl file have problem check message!");
+			return false;
+		}
+
+		if (FAILED(mDevice->CreateVertexShader((*ppCode)->GetBufferPointer(), (*ppCode)->GetBufferSize(), nullptr, ppVertexShader)))
+			return false;
+
+		return true;
+	}
+
+	bool GraphicsDevice_DX11::CreatePixelShader(const std::wstring& fileName, ID3DBlob** ppCode, ID3D11PixelShader** ppPixelShader)
+	{
+		DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+		shaderFlags |= D3DCOMPILE_DEBUG;
+		shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
+
+		ID3DBlob* errorBlob = nullptr;
+		const std::wstring shaderFilePath = L"..\\Shader_SOURCE\\";
+		D3DCompileFromFile((shaderFilePath + fileName).c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+			, "main", "ps_5_0", shaderFlags, 0, ppCode, &errorBlob);
+
+		if (errorBlob)
+		{
+			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+			errorBlob->Release();
+			assert(NULL && "hlsl file have problem check message!");
+			return false;
+		}
+
+		if (FAILED(mDevice->CreatePixelShader((*ppCode)->GetBufferPointer(), (*ppCode)->GetBufferSize(), nullptr, ppPixelShader)))
+			return false;
+
+		return true;
+	}
+
+	bool GraphicsDevice_DX11::CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs, UINT NumElements
+		, const void* pShaderBytecodeWithInputSignature, SIZE_T BytecodeLength, ID3D11InputLayout** ppInputLayout)
+	{
+		if (FAILED(mDevice->CreateInputLayout(pInputElementDescs, NumElements
+			, pShaderBytecodeWithInputSignature
+			, BytecodeLength
+			, ppInputLayout)))
+			return false;
+
+		return true;
+	}
+
+	bool GraphicsDevice_DX11::CreateBuffer(const D3D11_BUFFER_DESC* pDesc, const D3D11_SUBRESOURCE_DATA* pInitialData, ID3D11Buffer** ppBuffer)
+	{
+		if (FAILED(mDevice->CreateBuffer(pDesc, pInitialData, ppBuffer)))
+			return false;
+
+		return true;
+	}
+
+	void GraphicsDevice_DX11::BindConstantBuffer(eShaderStage stage, eCBType type, ID3D11Buffer* buffer)
+	{
+		UINT slot = (UINT)type;
+		switch (stage)
+		{
+		case PracticeEngine::Graphics::eShaderStage::VS:
+			mContext->VSSetConstantBuffers(slot, 1, &buffer);
+			break;
+		case PracticeEngine::Graphics::eShaderStage::HS:
+			mContext->HSSetConstantBuffers(slot, 1, &buffer);
+			break;
+		case PracticeEngine::Graphics::eShaderStage::DS:
+			mContext->DSSetConstantBuffers(slot, 1, &buffer);
+			break;
+		case PracticeEngine::Graphics::eShaderStage::GS:
+			mContext->GSSetConstantBuffers(slot, 1, &buffer);
+			break;
+		case PracticeEngine::Graphics::eShaderStage::PS:
+			mContext->PSSetConstantBuffers(slot, 1, &buffer);
+			break;
+		case PracticeEngine::Graphics::eShaderStage::CS:
+			mContext->CSSetConstantBuffers(slot, 1, &buffer);
+			break;
+		case PracticeEngine::Graphics::eShaderStage::All:
+			mContext->VSSetConstantBuffers(slot, 1, &buffer);
+			mContext->HSSetConstantBuffers(slot, 1, &buffer);
+			mContext->DSSetConstantBuffers(slot, 1, &buffer);
+			mContext->GSSetConstantBuffers(slot, 1, &buffer);
+			mContext->PSSetConstantBuffers(slot, 1, &buffer);
+			mContext->CSSetConstantBuffers(slot, 1, &buffer);
+			break;
+		default:
+			break;
+		}
+	}
+
+	void GraphicsDevice_DX11::Initialize()
+	{
+		if (!(CreateDevice()))
+			assert(NULL && "Create Device Failed!");
+
+#pragma region swapchain desc
+		DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
+
+		swapChainDesc.OutputWindow = application.GetHWND();
+		swapChainDesc.Windowed = true;
+		swapChainDesc.BufferCount = 2;
+		swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+
+		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		swapChainDesc.BufferDesc.Width = application.GetResolution().x;
+		swapChainDesc.BufferDesc.Height = application.GetResolution().y;
+		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		swapChainDesc.BufferDesc.RefreshRate.Numerator = 144;
+		swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
+		swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+
+#pragma region 4X MSAA surported check
+		// 4X MSAA surported check
+		UINT quility = 0;
+		mDevice->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &quility);
+		//if (quility > 0)
+		//{
+		//	swapChainDesc.SampleDesc.Count = 4; // how many multisamples
+		//	swapChainDesc.SampleDesc.Quality = quility - 1;
+		//}
+#pragma endregion
+
+		swapChainDesc.SampleDesc.Count = 1; // how many multisamples
+		swapChainDesc.SampleDesc.Quality = 0;
+#pragma endregion
+		if (!(CreateSwapchain(swapChainDesc)))
+			assert(NULL && "Create Swapchain Failed!");
+
+		if (!(GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)mRenderTarget.GetAddressOf())))
+			assert(NULL && "Couldn't bring rendertarget!");
+
+		if (!(CreateRenderTargetView(mRenderTarget.Get(), nullptr, mRenderTargetView.GetAddressOf())))
+			assert(NULL && "Create RenderTargetView Failed!");
+
+#pragma region depthstencil desc
 		D3D11_TEXTURE2D_DESC depthStencilDesc = {};
 		depthStencilDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_DEPTH_STENCIL;
 		depthStencilDesc.Format = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -83,38 +247,20 @@ namespace PracticeEngine::Graphics {
 		depthStencilDesc.ArraySize = 1;
 		depthStencilDesc.SampleDesc.Count = 1;
 		depthStencilDesc.SampleDesc.Quality = 0;
+#pragma endregion
+		if (!(CreateTexture2D(&depthStencilDesc, nullptr, mDepthStencil.GetAddressOf())))
+			assert(NULL && "Create depthstencil texture failed!");
 
+		if (!(CreateDepthStencilView(mDepthStencil.Get(), nullptr, mDepthStencilView.GetAddressOf())))
+			assert(NULL && "Create depthstencilview failed!");
 
-		if (FAILED(mDevice->CreateTexture2D(&depthStencilDesc, nullptr, mDepthStencil.GetAddressOf())))
-			return;
+		if (!(CreateVertexShader(L"TriangleVS.hlsl", &Renderer::vsBlob, &Renderer::vsShader)))
+			assert(NULL && "Create vertex shader failed!");
 
-		if (FAILED(mDevice->CreateDepthStencilView(mDepthStencil.Get(), nullptr, mDepthStencilView.GetAddressOf())))
-			return;
+		if (!(CreatePixelShader(L"TrianglePS.hlsl", &Renderer::psBlob, &Renderer::psShader)))
+			assert(NULL && "Create pixel shader failed!");
 
-		DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-		shaderFlags |= D3DCOMPILE_DEBUG;
-		shaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
-
-		//vertex shader
-		{
-			ID3DBlob* errorBlob = nullptr;
-			D3DCompileFromFile(L"..\\Shader_SOURCE\\TriangleVS.hlsl", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-				, "main", "vs_5_0", shaderFlags, 0, &Renderer::vsBlob, &errorBlob);
-
-			mDevice->CreateVertexShader(Renderer::vsBlob->GetBufferPointer()
-				, Renderer::vsBlob->GetBufferSize(), nullptr, &Renderer::vsShader);
-		}
-
-		//pixel shader
-		{
-			ID3DBlob* errorBlob = nullptr;
-			D3DCompileFromFile(L"..\\Shader_SOURCE\\TrianglePS.hlsl", nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-				, "main", "ps_5_0", shaderFlags, 0, &Renderer::psBlob, &errorBlob);
-
-			mDevice->CreatePixelShader(Renderer::psBlob->GetBufferPointer()
-				, Renderer::psBlob->GetBufferSize(), nullptr, &Renderer::psShader);
-		}
-
+#pragma region inputLayout Desc
 		D3D11_INPUT_ELEMENT_DESC inputLayoutDesces[2] = {};
 
 		inputLayoutDesces[0].AlignedByteOffset = 0;
@@ -130,12 +276,14 @@ namespace PracticeEngine::Graphics {
 		inputLayoutDesces[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		inputLayoutDesces[1].SemanticName = "COLOR";
 		inputLayoutDesces[1].SemanticIndex = 0;
-
-		mDevice->CreateInputLayout(inputLayoutDesces, 2
+#pragma endregion
+		if (!(CreateInputLayout(inputLayoutDesces, 2
 			, Renderer::vsBlob->GetBufferPointer()
 			, Renderer::vsBlob->GetBufferSize()
-			, &Renderer::inputLayouts);
+			, &Renderer::inputLayouts)))
+			assert(NULL && "Create input layout failed!");
 
+#pragma region vertex buffer desc
 		D3D11_BUFFER_DESC bufferDesc = {};
 
 		bufferDesc.ByteWidth = sizeof(Renderer::Vertex) * 3;
@@ -143,25 +291,43 @@ namespace PracticeEngine::Graphics {
 		bufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
 		bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
 
-		//xyz
-		//rgba
-		Renderer::vertexes[0].pos = Vector3(0.f, 0.5f, 0.0f);
-		Renderer::vertexes[0].color = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
-
-		Renderer::vertexes[1].pos = Vector3(0.5f, -0.5f, 0.0f);
-		Renderer::vertexes[1].color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-
-		Renderer::vertexes[2].pos = Vector3(-0.5f, -0.5f, 0.0f);
-		Renderer::vertexes[2].color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-
 		D3D11_SUBRESOURCE_DATA sub = { Renderer::vertexes };
 		//sub.pSysMem = Renderer::vertexes;
+#pragma endregion
+		if (!(CreateBuffer(&bufferDesc, &sub, &Renderer::vertexBuffer)))
+			assert(NULL && "indices buffer create fail!!");
 
-		mDevice->CreateBuffer(&bufferDesc, &sub, &Renderer::vertexBuffer);
+#pragma region index buffer desc
+		D3D11_BUFFER_DESC indexBufferdesc = {};
+		indexBufferdesc.ByteWidth = sizeof(UINT) * Renderer::indices.size();
+		indexBufferdesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_INDEX_BUFFER;
+		indexBufferdesc.Usage = D3D11_USAGE_DEFAULT;
+		indexBufferdesc.CPUAccessFlags = 0;
 
-	}
+		D3D11_SUBRESOURCE_DATA indicesData = {};
+		indicesData.pSysMem = Renderer::indices.data();
+#pragma endregion
+		if (!(Graphics::GetDevice()->CreateBuffer(&bufferDesc, &sub, &Renderer::vertexBuffer)))
+			assert(NULL && "Create vertex buffer failed!");
 	
-	void GraphicsDevice_DX11::Draw() {
+
+#pragma region constant buffer desc
+		D3D11_BUFFER_DESC constantBufferDesc = {};
+		constantBufferDesc.ByteWidth = sizeof(Vector4); // constant buffer 
+		constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		constantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+		constantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+		Vector4 pos(0.5f, 0.0f, 0.0f, 1.0f);
+		D3D11_SUBRESOURCE_DATA constantBufferData = {};
+		constantBufferData.pSysMem = &pos;
+#pragma endregion
+		if (!(Graphics::GetDevice()->CreateBuffer(&constantBufferDesc, &constantBufferData, &Renderer::constantBuffer)))
+			assert(NULL && "indices buffer create fail!!");
+	}
+
+	void GraphicsDevice_DX11::Draw()
+	{
 		FLOAT backgroundColor[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
 		mContext->ClearRenderTargetView(mRenderTargetView.Get(), backgroundColor);
 		mContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
@@ -174,12 +340,15 @@ namespace PracticeEngine::Graphics {
 		mContext->RSSetViewports(1, &viewPort);
 		mContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), mDepthStencilView.Get());
 
+		BindConstantBuffer(eShaderStage::VS, eCBType::Transform, Renderer::constantBuffer);
+
 		mContext->IASetInputLayout(Renderer::inputLayouts);
 		mContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		UINT vertexSize = sizeof(Renderer::Vertex);
 		UINT offset = 0;
 		mContext->IASetVertexBuffers(0, 1, &Renderer::vertexBuffer, &vertexSize, &offset);
+		mContext->IASetIndexBuffer(Renderer::indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 		mContext->VSSetShader(Renderer::vsShader, 0, 0);
 		mContext->PSSetShader(Renderer::psShader, 0, 0);
@@ -188,5 +357,4 @@ namespace PracticeEngine::Graphics {
 
 		mSwapChain->Present(1, 0);
 	}
-
 }
