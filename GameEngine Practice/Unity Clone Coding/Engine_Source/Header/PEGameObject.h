@@ -21,7 +21,7 @@ namespace PracticeEngine
 		virtual void Initialize();
 		virtual void Update();
 		virtual void LateUpdate();
-		virtual void Render();
+		virtual void Render(HDC hdc);
 
 		// 해당 오브젝트에 컴포넌트를 추가합니다
 		template<typename T>

@@ -68,7 +68,7 @@ namespace PracticeEngine {
 		}
 	}
 
-	void UIManager::Render()
+	void UIManager::Render(HDC hdc)
 	{
 		std::stack<UIBase*> uiBases = mUIBases;
 		while (!uiBases.empty())
@@ -76,7 +76,7 @@ namespace PracticeEngine {
 			UIBase* uiBase = uiBases.top();
 			if (uiBase)
 			{
-				uiBase->Render();
+				uiBase->Render(hdc);
 				uiBases.pop();
 			}
 		}

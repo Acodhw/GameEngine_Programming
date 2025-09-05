@@ -25,7 +25,8 @@ namespace PracticeEngine {
         Animation();
         ~Animation();
 
-        HRESULT Load(const std::wstring& path) override;
+        virtual HRESULT Save(const std::wstring& path) override;
+        virtual HRESULT Load(const std::wstring& path) override;
 
         void Update();
         void Render();

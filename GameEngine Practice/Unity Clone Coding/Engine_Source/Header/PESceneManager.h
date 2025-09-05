@@ -43,7 +43,7 @@ namespace PracticeEngine {
 		static void Initialize();
 		static void Update();
 		static void LateUpdate();
-		static void Render();
+		static void Render(HDC hdc);
 		static void Release();
 		static void Destroy();
 

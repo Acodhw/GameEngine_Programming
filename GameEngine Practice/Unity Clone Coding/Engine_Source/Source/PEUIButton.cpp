@@ -55,8 +55,11 @@ namespace PracticeEngine {
 	{
 	}
 
-	void UIButton::OnRender()
+	void UIButton::OnRender(HDC hdc)
 	{
+		Rectangle(hdc
+			, (int)mPosition.x, (int)mPosition.y
+			, mPosition.x + mSize.x, mPosition.y + mSize.y);
 	}
 
 	void UIButton::OnClear()

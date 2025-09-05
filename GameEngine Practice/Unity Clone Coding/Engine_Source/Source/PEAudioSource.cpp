@@ -6,7 +6,6 @@ namespace PracticeEngine
 {
 	AudioSource::AudioSource()
 		: Component(eComponentType::AudioSource)
-		, mAudioClip(nullptr)
 	{
 	}
 
@@ -27,10 +26,10 @@ namespace PracticeEngine
 		Transform* tr = GetOwner()->GetComponent<Transform>();
 		Vector2 pos = tr->GetPosition();
 
-		//mAudioClip->Set3DAttributes(pos);
+		mAudioClip->Set3DAttributes(pos);
 	}
 
-	void AudioSource::Render()
+	void AudioSource::Render(HDC hdc)
 	{
 	}
 

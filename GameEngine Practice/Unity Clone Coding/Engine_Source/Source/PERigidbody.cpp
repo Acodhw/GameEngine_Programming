@@ -29,7 +29,7 @@ namespace PracticeEngine {
 			Vector2 gravity = mGravity;
 			gravity.Normalize();
 
-			float dot = mVelocity.Dot(gravity);
+			float dot = Vector2::Dot(mVelocity, gravity);
 			mVelocity -= gravity * dot;
 		}
 		else
@@ -42,7 +42,7 @@ namespace PracticeEngine {
 		//최대 속도 제한
 		Vector2 gravity = mGravity;
 		gravity.Normalize();
-		float dot = mVelocity.Dot(gravity);
+		float dot = Vector2::Dot(mVelocity, gravity);
 		gravity = gravity * dot;
 
 		Vector2 sideVelocity = mVelocity - gravity;
@@ -61,8 +61,7 @@ namespace PracticeEngine {
 
 		if (mVelocity != Vector2::Zero) {
 			Vector2 friction = -mVelocity;
-			friction.Normalize();
-			friction = friction * mFriction * mMass * Time::DeltaTime;
+			friction = friction.Normalize() * mFriction * mMass * Time::DeltaTime;
 
 			if (mVelocity.Length() <= friction.Length())
 			{
@@ -78,13 +77,13 @@ namespace PracticeEngine {
 		pos = pos + mVelocity * Time::DeltaTime;
 		tr->SetPos(pos);
 
-		mForce = Vector2::One;
+		mForce.Clear();
 	}
 
 	void Rigidbody::LateUpdate()
 	{
 	}
-	void Rigidbody::Render()
+	void Rigidbody::Render(HDC hdc)
 	{
 	}
 }

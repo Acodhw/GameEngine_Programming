@@ -3,9 +3,8 @@
 #include "PEGraphicsDevice_DX11.h"
 #include "PEResources.h"
 #include "PEShader.h"
-#include "PEVertexBuffer.h"
-#include "PEIndexBuffer.h"
 #include "PEConstantBuffer.h"
+#include "PEMesh.h"
 
 
 using namespace PracticeEngine::Math;
@@ -17,8 +16,7 @@ namespace PracticeEngine::Renderer {
 	extern std::vector<Graphics::Vertex> vertexes;
 	extern std::vector<UINT> indices;
 
-	extern Graphics::VertexBuffer vertexBuffer;
-	extern Graphics::IndexBuffer indexBuffer;
+	extern Mesh* mesh;
 	extern Graphics::ConstantBuffer constantBuffers[(UINT)eCBType::End];
 
 	extern ID3D11Buffer* constantBuffer;

@@ -15,12 +15,12 @@ namespace PracticeEngine {
 		void Initialize() override;
 		void Update()  override;
 		void LateUpdate()  override;
-		void Render()  override;
+		void Render(HDC hdc)  override;
 		
 		void SetTexture(Graphics::Texture* texture) { mTexture = texture; }
 		void SetSize(Math::Vector2 size) { mSize = size; }
 		void SetIndex(Vector2 index) { mIndex = index; }
-		Vector2 GetIndex() const { return mIndex; }
+		Vector2 GetIndex() { return mIndex; }
 
 	public:
 		static Vector2 TileSize;

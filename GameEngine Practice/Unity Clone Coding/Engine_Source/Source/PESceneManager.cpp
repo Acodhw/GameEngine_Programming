@@ -23,10 +23,10 @@ namespace PracticeEngine {
 		mDontDestroyOnLoad->LateUpdate();
 	}
 
-	void SceneManager::Render() 
+	void SceneManager::Render(HDC hdc) 
 	{
-		mActiveScene->Render();
-		mDontDestroyOnLoad->Render();
+		mActiveScene->Render(hdc);
+		mDontDestroyOnLoad->Render(hdc);
 	}
 
 	void SceneManager::Release()

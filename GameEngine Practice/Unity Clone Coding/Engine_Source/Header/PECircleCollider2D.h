@@ -11,7 +11,7 @@ namespace PracticeEngine {
 		void Initialize() override;
 		void Update() override;
 		void LateUpdate() override;
-		void Render() override;
+		void Render(HDC hdc) override;
 
 		void SetRadius(float r) { mRadius = r; }
 		const float& radius = mRadius;

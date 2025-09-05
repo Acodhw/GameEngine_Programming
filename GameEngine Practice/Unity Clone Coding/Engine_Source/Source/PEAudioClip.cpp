@@ -19,10 +19,7 @@ namespace PracticeEngine
 		mSound->release();
 		mSound = nullptr;
 	}
-	HRESULT AudioClip::Save(const std::wstring& path)
-	{
-		return E_NOTIMPL;
-	}
+
 	HRESULT AudioClip::Load(const std::wstring& path)
 	{
 		std::string cPath(path.begin(), path.end());
@@ -49,9 +46,9 @@ namespace PracticeEngine
 		mChannel->stop();
 	}
 
-	void AudioClip::Set3DAttributes(const Vector3 pos)
+	void AudioClip::Set3DAttributes(const Vector2 pos)
 	{
-		FMOD_VECTOR fmodPos(pos.x, pos.y, pos.z);
+		FMOD_VECTOR fmodPos(0.0f, 0.0f, 0.0f);
 		FMOD_VECTOR fmodVel(0.0f, 0.0f, 0.0f);
 
 		mChannel->set3DAttributes(&fmodPos, &fmodVel);

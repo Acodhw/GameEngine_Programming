@@ -19,7 +19,10 @@ namespace PracticeEngine
 		mSound->release();
 		mSound = nullptr;
 	}
-
+	HRESULT AudioClip::Save(const std::wstring& path)
+	{
+		return E_NOTIMPL;
+	}
 	HRESULT AudioClip::Load(const std::wstring& path)
 	{
 		std::string cPath(path.begin(), path.end());

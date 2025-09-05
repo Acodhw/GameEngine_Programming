@@ -25,8 +25,27 @@ namespace PracticeEngine {
 
     }
 
-    void CircleCollider2D::Render() {
+    void CircleCollider2D::Render(HDC hdc) {
 		Transform* tr = GetOwner()->GetComponent<Transform>();
 		Vector2 pos = tr->GetPosition();
+
+		if (Renderer::mainCamera)
+			pos = Renderer::mainCamera->CaluatePosition(pos);
+
+
+		HBRUSH transparentBrush = (HBRUSH)GetStockObject(NULL_BRUSH);
+		HBRUSH oldBrush = (HBRUSH)SelectObject(hdc, transparentBrush);
+
+		HPEN greenPen = CreatePen(PS_SOLID, 2, RGB(0, 255, 0));
+		HPEN oldPen = (HPEN)SelectObject(hdc, greenPen);
+
+		Ellipse(hdc, pos.x + offset.x
+			, pos.y + offset.y
+			, pos.x + offset.x + 100 * GetSize().x
+			, pos.y + offset.y + 100 * GetSize().y);
+
+		SelectObject(hdc, oldBrush);
+		SelectObject(hdc, oldPen);
+		DeleteObject(greenPen);
     }
 }

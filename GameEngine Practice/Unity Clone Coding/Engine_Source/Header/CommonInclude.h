@@ -12,10 +12,8 @@
 #include<bitset>
 #include <functional>
 #include <filesystem>
-#include <mutex>
-#include <thread>
-#include <cassert>
 
+#include <cassert>
 #include <mmsystem.h>
 #include <dinput.h>
 #include <gdiplus.h>
@@ -26,7 +24,6 @@
 // 사용자 지정 라이브러리
 #include "PEMath.h"
 #include "PEEnums.h"
-
 
 
 

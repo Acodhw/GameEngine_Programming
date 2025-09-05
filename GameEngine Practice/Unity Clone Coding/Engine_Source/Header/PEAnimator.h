@@ -35,7 +35,7 @@ namespace PracticeEngine{
 		void Initialize() override;
 		void Update() override;
 		void LateUpdate() override;
-		void Render() override;
+		void Render(HDC hdc) override;
 
 		// 애니메이터에 애니메이터를 추가합니다
 		void CreateAnimation(const std::wstring& name,
@@ -47,10 +47,10 @@ namespace PracticeEngine{
 			float duration);
 
 		// 폴더 내부의 이미지를 이용해 애니메이션을 생성합니다
-		void CreateAnimationByFolder(/*const std::wstring& name,
+		void CreateAnimationByFolder(const std::wstring& name,
 			const std::wstring& path,
 			Vector2 offset,
-			float duration*/);
+			float duration);
 
 		// 애니메이션 목록에서 애니메이션을 찾습니다
 		Animation* FindAnimation(const std::wstring& name);

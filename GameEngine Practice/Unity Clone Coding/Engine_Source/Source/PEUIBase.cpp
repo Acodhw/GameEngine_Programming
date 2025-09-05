@@ -5,7 +5,7 @@ namespace PracticeEngine {
 
 	UIBase::UIBase(eUIType type)
 		: mType(type)
-		, mbMouseOn(false)		
+		, mbMouseOn(false)
 	{
 	}
 
@@ -33,7 +33,7 @@ namespace PracticeEngine {
 	{
 	}
 
-	void UIBase::Render()
+	void UIBase::Render(HDC hdc)
 	{
 	}
 
@@ -56,9 +56,6 @@ namespace PracticeEngine {
 	void UIBase::OnUpdate()
 	{
 	}
-
-	void UIBase::OnLateUpdate() {}
-	void UIBase::OnRender() {}
 
 	void UIBase::OnClear()
 	{

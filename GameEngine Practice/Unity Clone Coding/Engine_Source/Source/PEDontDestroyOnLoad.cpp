@@ -24,9 +24,9 @@ namespace PracticeEngine {
 		Scene::LateUpdate();
 	}
 
-	void DontDestroyOnLoad::Render()
+	void DontDestroyOnLoad::Render(HDC hdc)
 	{
-		Scene::Render();
+		Scene::Render(hdc);
 	}
 
 	void DontDestroyOnLoad::OnEnter()

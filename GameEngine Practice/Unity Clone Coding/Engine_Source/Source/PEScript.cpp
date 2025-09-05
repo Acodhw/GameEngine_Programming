@@ -17,7 +17,7 @@ namespace PracticeEngine {
     void Script::LateUpdate()
     {
     }
-    void Script::Render()
+    void Script::Render(HDC hdc)
     {
     }
 

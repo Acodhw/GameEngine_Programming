@@ -12,5 +12,5 @@ namespace PracticeEngine {
 	void Transform::Initialize() {}
 	void Transform::Update() {}
 	void Transform::LateUpdate() {}
-	void Transform::Render() {}
+	void Transform::Render(HDC hdc) {}
 }

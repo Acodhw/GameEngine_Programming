@@ -6,8 +6,7 @@ namespace PracticeEngine::Renderer {
 	std::vector<Graphics::Vertex> vertexes = {};
 	std::vector<UINT> indices;
 
-	Graphics::VertexBuffer vertexBuffer;
-	Graphics::IndexBuffer indexBuffer;
+	Mesh* mesh = nullptr;
 	Graphics::ConstantBuffer constantBuffers[(UINT)eCBType::End] = {};
 
 	ID3D11Buffer* constantBuffer = nullptr;
@@ -15,6 +14,7 @@ namespace PracticeEngine::Renderer {
 
 	void LoadTriangleMesh()
 	{
+		mesh = new Mesh();
 		Renderer::vertexes.resize(3);
 		Renderer::vertexes[0].pos = Vector3(0.0f, 0.5f, 0.0f);
 		Renderer::vertexes[0].color = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
@@ -28,6 +28,9 @@ namespace PracticeEngine::Renderer {
 		indices.push_back(0);
 		indices.push_back(1);
 		indices.push_back(2);
+
+		mesh->CreateVB(vertexes);
+		mesh->CreateIB(indices);
 	}
 
 	void LoadMeshes()
@@ -56,5 +59,6 @@ namespace PracticeEngine::Renderer {
 	void Release()
 	{
 		inputLayouts->Release();
+		delete mesh;
 	}
 }

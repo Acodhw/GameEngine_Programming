@@ -167,6 +167,11 @@ namespace PracticeEngine::Graphics {
 		mContext->Unmap(buffer, 0);
 	}
 
+	void GraphicsDevice_DX11::BindPrimitiveTopology(const D3D11_PRIMITIVE_TOPOLOGY topology)
+	{
+		mContext->IASetPrimitiveTopology(topology);
+	}
+
 	void GraphicsDevice_DX11::BindVS(ID3D11VertexShader* pVertexShader)
 	{
 		mContext->VSSetShader(pVertexShader, 0, 0);
@@ -308,9 +313,6 @@ namespace PracticeEngine::Graphics {
 			, triangle->GetVSBlob()->GetBufferSize()
 			, &Renderer::inputLayouts)))
 			assert(NULL && "Create input layout failed!");
-
-		Renderer::vertexBuffer.Create(Renderer::vertexes);
-		Renderer::indexBuffer.Create(Renderer::indices);
 	}
 
 	void GraphicsDevice_DX11::Draw()
@@ -331,9 +333,8 @@ namespace PracticeEngine::Graphics {
 
 		mContext->IASetInputLayout(Renderer::inputLayouts);
 		mContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-		Renderer::vertexBuffer.Bind();
-		Renderer::indexBuffer.Bind();
+		
+		Renderer::mesh->Bind();
 
 		Vector4 pos(0.5f, 0.0f, 0.0f, 1.0f);
 		Renderer::constantBuffers[(UINT)eCBType::Transform].SetData(&pos);

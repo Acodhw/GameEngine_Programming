@@ -14,11 +14,12 @@ namespace PracticeEngine {
 
 	void UIHUD::OnInit()
 	{
-		//mTexture = Resources::Find<Graphics::Texture>(L"HPBAR");
+		mTexture = Resources::Find<Graphics::Texture>(L"HPBAR");
 	}
 
 	void UIHUD::OnActive()
 	{
+		//int* p = new int;
 	}
 
 	void UIHUD::OnInActive()
@@ -33,17 +34,17 @@ namespace PracticeEngine {
 	{
 	}
 
-	void UIHUD::OnRender()
+	void UIHUD::OnRender(HDC hdc)
 	{
-		//TransparentBlt(hdc
-		//	, 0, 0
-		//	, mTexture->width
-		//	, mTexture->height
-		//	, mTexture->GetHdc()
-		//	, 0, 0
-		//	, mTexture->width / 2.0f
-		//	, mTexture->height
-		//	, RGB(255, 0, 255));
+		TransparentBlt(hdc
+			, 0, 0
+			, mTexture->width
+			, mTexture->height
+			, mTexture->GetHdc()
+			, 0, 0
+			, mTexture->width / 2.0f
+			, mTexture->height
+			, RGB(255, 0, 255));
 	}
 
 	void UIHUD::OnClear()

@@ -44,11 +44,11 @@ namespace PracticeEngine
 		}
 	}
 
-	void GameObject::Render()
+	void GameObject::Render(HDC hdc)
 	{
 		for (Component* c : mComponents) {
 			if (c == nullptr) continue;
-			c->Render();
+			c->Render(hdc);
 		}
 	}
 

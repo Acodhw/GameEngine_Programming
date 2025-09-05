@@ -30,7 +30,7 @@ namespace PracticeEngine {
 		void InActive();
 		void Update();
 		void LateUpdate();
-		void Render();
+		void Render(HDC hdc);
 
 		// UI가 사라질 때 호출되는 함수
 		void UIClear();
@@ -40,7 +40,7 @@ namespace PracticeEngine {
 		virtual void OnInActive();
 		virtual void OnUpdate();
 		virtual void OnLateUpdate();
-		virtual void OnRender();
+		virtual void OnRender(HDC hdc);
 		virtual void OnClear();
 
 		eUIType GetType() { return mType; }
