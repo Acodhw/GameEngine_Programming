@@ -7,8 +7,9 @@
 //#pragma comment(lib, "..\\x64\\Debug\\PracticeEngine_Window.lib")
 #include "..\\PracticeEngine_SOURCE\\PEApplication.h"
 #include "..\\PracticeEngine_Window\\PELoadScene.h"
-#include "..\\PracticeEngine_Window\\PELoadResources.h"
-#include "..\\PracticeEngine_SOURCE\\\PESceneManager.h"
+#include "..\\PracticeEngine_SOURCE\\PESceneManager.h"
+#include "..\\PracticeEngine_SOURCE\\PEResources.h"
+#include "..\\PracticeEngine_SOURCE\\PETexture.h"
 
 PracticeEngine::Application application;
 
@@ -177,7 +178,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
     Gdiplus::GdiplusStartup(&gpToken, &gpsi, NULL); // gdiplus로 이미지 불러오기 시작(포인터 토큰, gdi인풋, gdi 아웃풋)
 
-    PracticeEngine::LoadResources(); // 리소스 로딩
     PracticeEngine::LoadScenes(); // 씬 로딩
 
     PracticeEngine::Scene* activeScene = PracticeEngine::SceneManager::GetActiveScene();

@@ -307,7 +307,7 @@ namespace PracticeEngine::Graphics {
 		D3D11_SUBRESOURCE_DATA indicesData = {};
 		indicesData.pSysMem = Renderer::indices.data();
 #pragma endregion
-		if (!(Graphics::GetDevice()->CreateBuffer(&bufferDesc, &sub, &Renderer::vertexBuffer)))
+		if (!(Graphics::GetDevice()->CreateBuffer(&bufferDesc, &sub, &Renderer::indexBuffer)))
 			assert(NULL && "Create vertex buffer failed!");
 	
 

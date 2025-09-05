@@ -12,8 +12,10 @@
 #include<bitset>
 #include <functional>
 #include <filesystem>
-
+#include <mutex>
+#include <thread>
 #include <cassert>
+
 #include <mmsystem.h>
 #include <dinput.h>
 #include <gdiplus.h>

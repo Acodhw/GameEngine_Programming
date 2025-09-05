@@ -17,7 +17,7 @@ namespace PracticeEngine::Renderer {
 
 	void LoadTriangleMesh()
 	{
-		Renderer::vertexes[0].pos = Vector3(0.f, 0.5f, 0.0f);
+		Renderer::vertexes[0].pos = Vector3(0.0f, 0.5f, 0.0f);
 		Renderer::vertexes[0].color = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
 
 		Renderer::vertexes[1].pos = Vector3(0.5f, -0.5f, 0.0f);
@@ -49,5 +49,7 @@ namespace PracticeEngine::Renderer {
 		psBlob->Release();
 		psShader->Release();
 		inputLayouts->Release();
+		indexBuffer->Release();
+		constantBuffer->Release();
 	}
 }
