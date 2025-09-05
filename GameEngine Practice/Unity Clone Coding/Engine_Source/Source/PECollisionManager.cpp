@@ -25,7 +25,7 @@ namespace PracticeEngine{
 			{
 				if (mCollisionLayerMatrix[row][col] == true)
 				{
-					LayerCollision(scene, (eLayerType)row, (eLayerType)col);
+					LayerCollision((eLayerType)row, (eLayerType)col);
 				}
 			}
 		}
@@ -36,7 +36,7 @@ namespace PracticeEngine{
 	
 	}
 
-	void CollisionManager::Render(HDC hdc) 
+	void CollisionManager::Render() 
 	{
 	
 	}
@@ -60,26 +60,26 @@ namespace PracticeEngine{
 
 		mCollisionLayerMatrix[row][col] = enable;
 	}
-	void CollisionManager::LayerCollision(class Scene* scene, eLayerType left, eLayerType right) {
-		const std::vector<GameObject*>& lefts = SceneManager::GetGameObjects(left);
-		const std::vector<GameObject*>& rights = SceneManager::GetGameObjects(right); 
+	void CollisionManager::LayerCollision( eLayerType left, eLayerType right) {
+		const std::vector<GameObject*>& leftObjs = SceneManager::GetGameObjects(left);//scene->GetLayer(left)->GetGameObjects();
+		const std::vector<GameObject*>& rightObjs = SceneManager::GetGameObjects(right); // scene->GetLayer(right)->GetGameObjects();
 
-		for (GameObject* left : lefts)
+		for (GameObject* leftObj : leftObjs)
 		{
-			if (left->state == false)
+			if (leftObj->IsActive() == false)
 				continue;
-			Collider* leftCol = left->GetComponent<Collider>();
+			Collider* leftCol = leftObj->GetComponent<Collider>();
 			if (leftCol == nullptr)
 				continue;
 
-			for (GameObject* right : rights)
+			for (GameObject* rightObj : rightObjs)
 			{
-				if (right->state == false)
+				if (rightObj->IsActive() == false)
 					continue;
-				Collider* rightCol = right->GetComponent<Collider>();
+				Collider* rightCol = rightObj->GetComponent<Collider>();
 				if (rightCol == nullptr)
 					continue;
-				if (left == right)
+				if (leftObj == rightObj)
 					continue;
 
 				ColliderCollision(leftCol, rightCol);

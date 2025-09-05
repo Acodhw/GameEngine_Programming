@@ -25,10 +25,11 @@ namespace PracticeEngine {
         Animation();
         ~Animation();
 
-        HRESULT Load(const std::wstring& path) override;
+        virtual HRESULT Save(const std::wstring& path) override;
+        virtual HRESULT Load(const std::wstring& path) override;
 
         void Update();
-        void Render(HDC hdc);
+        void Render();
 
         // 애니메이션 클립을 지정합니다
         void CreateAnimation(const std::wstring& name,
@@ -42,7 +43,7 @@ namespace PracticeEngine {
         // 애니메이션을 리셋합니다
         void Reset();
         // 애니메이션이 끝났는지 확인합니다
-        bool IsComplete() { return mbComplete; }
+        bool IsComplete() const { return mbComplete; }
         // 애니메이터에 애니메이션을 지정합니다
         void SetAnimator(class Animator* animator) { mAnimator = animator; }
 

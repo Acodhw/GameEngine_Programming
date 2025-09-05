@@ -38,7 +38,7 @@ namespace PracticeEngine {
 	void Camera::LateUpdate()
 	{
 	}
-	void Camera::Render(HDC hdc)
+	void Camera::Render()
 	{
 	}
 }

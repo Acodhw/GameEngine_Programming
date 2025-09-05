@@ -23,6 +23,11 @@ namespace PracticeEngine {
 	{
 	}
 
+	HRESULT Animation::Save(const std::wstring& path)
+	{
+		return E_NOTIMPL;
+	}
+
 	HRESULT Animation::Load(const std::wstring& path)
 	{
 		return E_NOTIMPL;
@@ -40,86 +45,10 @@ namespace PracticeEngine {
 		}
 	}
 
-	void Animation::Render(HDC hdc) 
+	void Animation::Render() 
 	{
-		// 알파블랜드 조건 : 해당 이미지에 알파채널(RGBA로 이루워진 이미지)여야한다(jpg같은거 안됨)
 		if (mTexture == nullptr)
 			return;
-
-		GameObject* g =	mAnimator->GetOwner();
-		Transform* tr = g->GetComponent<Transform>();
-		Vector2 pos = tr->GetPosition();
-		Vector2 scl = tr->GetScale();
-		float rot = tr->GetRotation();
-
-		if (Renderer::mainCamera) pos = Renderer::mainCamera->CaluatePosition(pos);
-
-		Graphics::Texture::eTextureType type = mTexture->GetTextureType();
-
-		Sprite spr = mAnimationSheet[mIndex];
-		HDC imgHdc = mTexture->GetHdc();
-
-		if (mTexture->GetTextureType() == Graphics::Texture::eTextureType::BMP)
-		{
-			
-			if (mTexture->IsAlpha()) {
-				BLENDFUNCTION func = {};
-				func.BlendOp = AC_SRC_OVER;
-				func.BlendFlags = 0;
-				func.AlphaFormat = AC_SRC_ALPHA;
-				func.SourceConstantAlpha = 255;
-
-				AlphaBlend(hdc
-					, pos.x - (spr.size.x * scl.x * spr.offset.x)
-					, pos.y - (spr.size.y * scl.y * spr.offset.y)
-					, spr.size.x * scl.x
-					, spr.size.y * scl.y
-					, imgHdc
-					, spr.leftTop.x
-					, spr.leftTop.y
-					, spr.size.x
-					, spr.size.y
-					, func);
-			}
-			else {
-				TransparentBlt(hdc
-					, pos.x - (spr.size.x * scl.x * spr.offset.x)
-					, pos.y - (spr.size.y * scl.y * spr.offset.y)
-					, spr.size.x * scl.x
-					, spr.size.y * scl.y
-					, imgHdc
-					, spr.leftTop.x
-					, spr.leftTop.y
-					, spr.size.x
-					, spr.size.y
-					, RGB(255, 0, 255));
-			}
-		}
-
-		else if (mTexture->GetTextureType() == Graphics::Texture::eTextureType::PNG)
-		{
-			Gdiplus::ImageAttributes imgAtt = {};
-
-			imgAtt.SetColorKey(Gdiplus::Color(255, 255, 255), Gdiplus::Color(100, 100, 100));
-			
-			Gdiplus::Graphics graphcis(hdc);
-
-			graphcis.TranslateTransform(pos.x, pos.y);
-			graphcis.RotateTransform(rot);
-			graphcis.TranslateTransform(-pos.x, -pos.y);
-
-			graphcis.DrawImage(mTexture->GetImage(),
-				Gdiplus::Rect(pos.x - (spr.size.x * scl.x * spr.offset.x),
-					pos.y - (spr.size.y * scl.y * spr.offset.y),
-					spr.size.x * scl.x,
-					spr.size.y * scl.y),
-					spr.leftTop.x,
-					spr.leftTop.y,
-					spr.size.x,
-					spr.size.y,
-					Gdiplus::Unit::UnitPixel,
-					&imgAtt);
-		}
 	}
 
 	void Animation::CreateAnimation(const std::wstring& name,
@@ -130,6 +59,7 @@ namespace PracticeEngine {
 		UINT spriteLength,
 		float duration)
 	{
+		SetName(name);
 		mTexture = spriteTexture;
 		int w = spriteTexture->width;
 		for (size_t i = 0; i < spriteLength; i++) {

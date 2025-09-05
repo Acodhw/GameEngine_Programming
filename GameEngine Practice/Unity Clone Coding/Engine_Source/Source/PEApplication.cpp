@@ -3,6 +3,10 @@
 #include "PETime.h"
 #include "PESceneManager.h"
 #include "PEResources.h"
+#include "PEFmod.h"
+#include "PECollisionManager.h"
+#include "PEUIManager.h"
+#include "PERenderer.h"
 
 #define MAX_LOADSTRING 100
 
@@ -28,6 +32,16 @@ namespace PracticeEngine {
 		adjustWindowRect(hwnd, width, height);
 		createBuffer(width, height);
 		initializeEtc();
+
+		mGraphicDevice = std::make_unique<Graphics::GraphicsDevice_DX11>();
+		Renderer::Initialize();
+		mGraphicDevice->Initialize();
+
+		Fmod::Initialize();		
+		CollisionManager::Initialize();
+		UIManager::Initialize();
+		SceneManager::Initialize();
+		
 	}
 
 
@@ -50,18 +64,21 @@ namespace PracticeEngine {
 	}
 
 	void Application::Render() {
-		Rectangle(mBackHDC, -5, -5, mWidth + 5, mHeight + 5);
-		SceneManager::Render(mBackHDC);
-
-		// BackBuffer를 원본  Buffer에 복사
-		BitBlt(mHdc, 0, 0, mWidth, mHeight, mBackHDC, 0, 0, SRCCOPY); 
+		mGraphicDevice->Draw();
+		
+		SceneManager::Render();
+		UIManager::Render();
+		CollisionManager::Render();
 		infoTitle();
 	}
 
 	void Application::Release()
 	{
 		SceneManager::Release();
+		UIManager::Release();
 		Resources::Release();
+
+		Renderer::Release();
 	}
 
 	void Application::Destroy()
@@ -88,7 +105,7 @@ namespace PracticeEngine {
 		HBRUSH grayBrush = (HBRUSH)CreateSolidBrush(RGB(128, 128, 128));
 		HBRUSH oldBrush = (HBRUSH)SelectObject(mBackHDC, grayBrush);
 
-		Rectangle(mBackHDC, -1, -1, 1601, 901);
+		::Rectangle(mBackHDC, -1, -1, 1601, 901);
 
 		(HBRUSH)SelectObject(mBackHDC, oldBrush);
 		DeleteObject(grayBrush);
@@ -105,7 +122,7 @@ namespace PracticeEngine {
 		mHwmd = hwnd;
 		mHdc = GetDC(mHwmd);
 
-		RECT rect = { 0, 0, width, height };
+		RECT rect = { 0, 0, (LONG)width, (LONG)height };
 		AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false); // 윈도우 작업영역을 Rect로 변경(&RECT, 윈도우스타일, 메뉴바)
 
 		mWidth = rect.right - rect.left;

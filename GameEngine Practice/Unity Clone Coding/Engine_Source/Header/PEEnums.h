@@ -26,9 +26,9 @@ namespace PracticeEngine
 
 	enum class eResourceType {
 		Texture,
-		//Mesh
-		//Shader
+		Mesh,
 		AudioClip,
+		Shader,
 		Animaiton,
 		Prefab,
 		End,

@@ -10,11 +10,12 @@ namespace PracticeEngine
 		AudioClip();
 		virtual ~AudioClip();
 
+		virtual HRESULT Save(const std::wstring& path) override;
 		virtual HRESULT Load(const std::wstring& path) override;
 
 		void Play();
 		void Stop();
-		void Set3DAttributes(const Vector2 pos);
+		void Set3DAttributes(const Vector3 pos);
 		void SetLoop(bool loop) { mbLoop = loop; }
 
 	private:
