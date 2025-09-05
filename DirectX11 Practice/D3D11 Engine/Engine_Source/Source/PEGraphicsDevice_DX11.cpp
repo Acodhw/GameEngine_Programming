@@ -1,6 +1,8 @@
 #include "PEGraphicsDevice_DX11.h"
 #include "PEApplication.h"
 #include "PERenderer.h"
+#include "PEShader.h"
+#include "PEResources.h"
 
 extern PracticeEngine::Application application;
 
@@ -8,6 +10,8 @@ namespace PracticeEngine::Graphics {
 	GraphicsDevice_DX11::GraphicsDevice_DX11()
 	{
 		PracticeEngine::Graphics::GetDevice() = this;
+		if (!(CreateDevice()))
+			assert(NULL && "Create Device Failed!");
 	}
 
 	GraphicsDevice_DX11::~GraphicsDevice_DX11()
@@ -23,11 +27,11 @@ namespace PracticeEngine::Graphics {
 		creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-		HRESULT hr = D3D11CreateDevice(0, D3D_DRIVER_TYPE_HARDWARE,
+		if (FAILED(D3D11CreateDevice(0, D3D_DRIVER_TYPE_HARDWARE,
 			0, creationFlags,
 			featureLevels, ARRAYSIZE(featureLevels),
 			D3D11_SDK_VERSION, mDevice.GetAddressOf(),
-			0, mContext.GetAddressOf());
+			0, mContext.GetAddressOf()))) return false;
 
 		return true;
 	}
@@ -93,7 +97,7 @@ namespace PracticeEngine::Graphics {
 
 		ID3DBlob* errorBlob = nullptr;
 		const std::wstring shaderFilePath = L"..\\Shader_SOURCE\\";
-		D3DCompileFromFile((shaderFilePath + fileName).c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+		D3DCompileFromFile((shaderFilePath + fileName + L"VS.hlsl").c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
 			, "main", "vs_5_0", shaderFlags, 0, ppCode, &errorBlob);
 
 		if (errorBlob)
@@ -118,7 +122,7 @@ namespace PracticeEngine::Graphics {
 
 		ID3DBlob* errorBlob = nullptr;
 		const std::wstring shaderFilePath = L"..\\Shader_SOURCE\\";
-		D3DCompileFromFile((shaderFilePath + fileName).c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
+		D3DCompileFromFile((shaderFilePath + fileName + L"PS.hlsl").c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
 			, "main", "ps_5_0", shaderFlags, 0, ppCode, &errorBlob);
 
 		if (errorBlob)
@@ -154,6 +158,35 @@ namespace PracticeEngine::Graphics {
 
 		return true;
 	}
+
+	void GraphicsDevice_DX11::SetDataBuffer(ID3D11Buffer* buffer, void* data, UINT size)
+	{
+		D3D11_MAPPED_SUBRESOURCE sub = {};
+		mContext->Map(buffer, 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &sub);
+		memcpy(sub.pData, data, size);
+		mContext->Unmap(buffer, 0);
+	}
+
+	void GraphicsDevice_DX11::BindVS(ID3D11VertexShader* pVertexShader)
+	{
+		mContext->VSSetShader(pVertexShader, 0, 0);
+	}
+
+	void GraphicsDevice_DX11::BindPS(ID3D11PixelShader* pPixelShader)
+	{
+		mContext->PSSetShader(pPixelShader, 0, 0);
+	}
+
+	void GraphicsDevice_DX11::BindVertexBuffer(UINT StartSlot, UINT NumBuffers, ID3D11Buffer* const* ppVertexBuffers, const UINT* pStrides, const UINT* pOffsets)
+	{
+		mContext->IASetVertexBuffers(StartSlot, NumBuffers, ppVertexBuffers, pStrides, pOffsets);
+	}
+
+	void GraphicsDevice_DX11::BindIndexBuffer(ID3D11Buffer* pIndexBuffer, DXGI_FORMAT Format, UINT Offset)
+	{
+		mContext->IASetIndexBuffer(pIndexBuffer, Format, Offset);
+	}
+
 
 	void GraphicsDevice_DX11::BindConstantBuffer(eShaderStage stage, eCBType type, ID3D11Buffer* buffer)
 	{
@@ -193,8 +226,6 @@ namespace PracticeEngine::Graphics {
 
 	void GraphicsDevice_DX11::Initialize()
 	{
-		if (!(CreateDevice()))
-			assert(NULL && "Create Device Failed!");
 
 #pragma region swapchain desc
 		DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
@@ -254,12 +285,6 @@ namespace PracticeEngine::Graphics {
 		if (!(CreateDepthStencilView(mDepthStencil.Get(), nullptr, mDepthStencilView.GetAddressOf())))
 			assert(NULL && "Create depthstencilview failed!");
 
-		if (!(CreateVertexShader(L"TriangleVS.hlsl", &Renderer::vsBlob, &Renderer::vsShader)))
-			assert(NULL && "Create vertex shader failed!");
-
-		if (!(CreatePixelShader(L"TrianglePS.hlsl", &Renderer::psBlob, &Renderer::psShader)))
-			assert(NULL && "Create pixel shader failed!");
-
 #pragma region inputLayout Desc
 		D3D11_INPUT_ELEMENT_DESC inputLayoutDesces[2] = {};
 
@@ -277,53 +302,15 @@ namespace PracticeEngine::Graphics {
 		inputLayoutDesces[1].SemanticName = "COLOR";
 		inputLayoutDesces[1].SemanticIndex = 0;
 #pragma endregion
+		Graphics::Shader* triangle = Resources::Find<Graphics::Shader>(L"TriangleShader");
 		if (!(CreateInputLayout(inputLayoutDesces, 2
-			, Renderer::vsBlob->GetBufferPointer()
-			, Renderer::vsBlob->GetBufferSize()
+			, triangle->GetVSBlob()->GetBufferPointer()
+			, triangle->GetVSBlob()->GetBufferSize()
 			, &Renderer::inputLayouts)))
 			assert(NULL && "Create input layout failed!");
 
-#pragma region vertex buffer desc
-		D3D11_BUFFER_DESC bufferDesc = {};
-
-		bufferDesc.ByteWidth = sizeof(Renderer::Vertex) * 3;
-		bufferDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
-		bufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
-		bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
-
-		D3D11_SUBRESOURCE_DATA sub = { Renderer::vertexes };
-		//sub.pSysMem = Renderer::vertexes;
-#pragma endregion
-		if (!(CreateBuffer(&bufferDesc, &sub, &Renderer::vertexBuffer)))
-			assert(NULL && "indices buffer create fail!!");
-
-#pragma region index buffer desc
-		D3D11_BUFFER_DESC indexBufferdesc = {};
-		indexBufferdesc.ByteWidth = sizeof(UINT) * Renderer::indices.size();
-		indexBufferdesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_INDEX_BUFFER;
-		indexBufferdesc.Usage = D3D11_USAGE_DEFAULT;
-		indexBufferdesc.CPUAccessFlags = 0;
-
-		D3D11_SUBRESOURCE_DATA indicesData = {};
-		indicesData.pSysMem = Renderer::indices.data();
-#pragma endregion
-		if (!(Graphics::GetDevice()->CreateBuffer(&bufferDesc, &sub, &Renderer::indexBuffer)))
-			assert(NULL && "Create vertex buffer failed!");
-	
-
-#pragma region constant buffer desc
-		D3D11_BUFFER_DESC constantBufferDesc = {};
-		constantBufferDesc.ByteWidth = sizeof(Vector4); // constant buffer 
-		constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		constantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-		constantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-		Vector4 pos(0.5f, 0.0f, 0.0f, 1.0f);
-		D3D11_SUBRESOURCE_DATA constantBufferData = {};
-		constantBufferData.pSysMem = &pos;
-#pragma endregion
-		if (!(Graphics::GetDevice()->CreateBuffer(&constantBufferDesc, &constantBufferData, &Renderer::constantBuffer)))
-			assert(NULL && "indices buffer create fail!!");
+		Renderer::vertexBuffer.Create(Renderer::vertexes);
+		Renderer::indexBuffer.Create(Renderer::indices);
 	}
 
 	void GraphicsDevice_DX11::Draw()
@@ -334,7 +321,7 @@ namespace PracticeEngine::Graphics {
 
 		D3D11_VIEWPORT viewPort =
 		{
-			0, 0, application.GetResolution().x, application.GetResolution().y,
+			0, 0, (float)application.GetResolution().x, (float)application.GetResolution().y,
 			0.0f, 1.0f
 		};
 		mContext->RSSetViewports(1, &viewPort);
@@ -345,13 +332,15 @@ namespace PracticeEngine::Graphics {
 		mContext->IASetInputLayout(Renderer::inputLayouts);
 		mContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		UINT vertexSize = sizeof(Renderer::Vertex);
-		UINT offset = 0;
-		mContext->IASetVertexBuffers(0, 1, &Renderer::vertexBuffer, &vertexSize, &offset);
-		mContext->IASetIndexBuffer(Renderer::indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		Renderer::vertexBuffer.Bind();
+		Renderer::indexBuffer.Bind();
 
-		mContext->VSSetShader(Renderer::vsShader, 0, 0);
-		mContext->PSSetShader(Renderer::psShader, 0, 0);
+		Vector4 pos(0.5f, 0.0f, 0.0f, 1.0f);
+		Renderer::constantBuffers[(UINT)eCBType::Transform].SetData(&pos);
+		Renderer::constantBuffers[(UINT)eCBType::Transform].Bind(eShaderStage::VS);
+
+		Graphics::Shader* triangle = Resources::Find<Graphics::Shader>(L"TriangleShader");
+		triangle->Bind();
 
 		mContext->Draw(3, 0);
 

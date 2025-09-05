@@ -14,7 +14,7 @@ namespace PracticeEngine {
 		void Initialize() override;
 		void Update() override;
 		void LateUpdate() override;
-		void Render(HDC hdc) override;
+		void Render() override;
 
 		// 포지션을 지정합니다
 		void SetPos(Vector2 pos) { mPosition.x = pos.x; mPosition.y = pos.y; }

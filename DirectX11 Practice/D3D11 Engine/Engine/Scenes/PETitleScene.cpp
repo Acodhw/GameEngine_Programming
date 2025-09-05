@@ -27,11 +27,11 @@ namespace PracticeEngine {
     {
         Scene::LateUpdate();
     }
-    void TitleScene::Render(HDC hdc)
+    void TitleScene::Render()
     {
-        Scene::Render(hdc);
-        wchar_t str[50] = L"Title";
-        TextOutW(hdc, 50, 50, str, wcslen(str));
+        Scene::Render();
+        //wchar_t str[50] = L"Title";
+        //TextOutW(hdc, 50, 50, str, wcslen(str));
     }
 
     void TitleScene::OnEnter()

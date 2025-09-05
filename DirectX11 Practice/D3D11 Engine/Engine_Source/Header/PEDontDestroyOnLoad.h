@@ -12,7 +12,7 @@ namespace PracticeEngine {
 		virtual void Initialize();
 		virtual void Update();
 		virtual void LateUpdate();
-		virtual void Render(HDC hdc);
+		virtual void Render();
 
 		//씬이 작동될 때 실행되는 함수
 		virtual void OnEnter();

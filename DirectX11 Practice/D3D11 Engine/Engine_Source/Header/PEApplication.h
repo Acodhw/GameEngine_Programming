@@ -23,11 +23,11 @@ namespace PracticeEngine {
 		void Destroy();
 
 		// 핸들을 가져옵니다
-		HWND GetHWND() { return mHwmd; }
+		HWND GetHWND() const { return mHwmd; }
 		// HDC를 가져옵니다
-		HDC GetHDC() { return mHdc; }
+		HDC GetHDC() const { return mHdc; }
 		// 해상도를 가져옵니다
-		Math::Vector2 GetResolution() { return Math::Vector2(mWidth, mHeight); }
+		Math::Vector2 GetResolution() const { return Math::Vector2(mWidth, mHeight); }
 
 
 	private:

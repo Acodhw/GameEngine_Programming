@@ -29,6 +29,7 @@ namespace PracticeEngine
 		//Mesh
 		//Shader
 		AudioClip,
+		Shader,
 		Animaiton,
 		Prefab,
 		End,

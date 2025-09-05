@@ -33,7 +33,7 @@ namespace PracticeEngine {
 	{
 	}
 
-	void UIBase::Render(HDC hdc)
+	void UIBase::Render()
 	{
 	}
 
@@ -58,7 +58,7 @@ namespace PracticeEngine {
 	}
 
 	void UIBase::OnLateUpdate() {}
-	void UIBase::OnRender(HDC hdc) {}
+	void UIBase::OnRender() {}
 
 	void UIBase::OnClear()
 	{

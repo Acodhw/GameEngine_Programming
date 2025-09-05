@@ -9,19 +9,19 @@ namespace PracticeEngine {
 	{
 	public:
 		Component(eComponentType ctype);
-		~Component();
+		virtual ~Component();
 
 		virtual void Initialize();
 		virtual void Update();
 		virtual void LateUpdate();
-		virtual void Render(HDC hdc);
+		virtual void Render();
 
 		// 해당 컴포넌트를 특정 오브젝트에게 대입합니다.
 		void SetOwner(GameObject* owner) { mOwner = owner; };
 		// 컴포넌트를 가지고 있는 오브젝트를 가져옵니다
-		GameObject* GetOwner() { return mOwner; }
+		GameObject* GetOwner() const { return mOwner; }
 		// 컴포넌트 타입을 가져옵니다
-		eComponentType GetType() { return mC_Type; }
+		eComponentType GetType() const { return mC_Type; }
 	private:
 		GameObject* mOwner; // 컴포넌트를 가지고 있는 오브젝트
 		eComponentType mC_Type; // 해당 컴포넌트의 타입입니다.

@@ -10,7 +10,7 @@ namespace PracticeEngine {
 		void Initialize() override;
 		void Update() override;
 		void LateUpdate() override;
-		void Render(HDC hdc) override;
+		void Render() override;
 
 		void OnEnter() override;
 		void OnExit()  override;
@@ -20,8 +20,8 @@ namespace PracticeEngine {
 
 	private:
 		bool mbLoadCompleted;
-		std::thread* mResourcesLoad;
-		std::mutex mMutex;
+		std::thread* mResourcesLoadThread;
+		std::mutex mMutualExclusion;
     };
 
 }

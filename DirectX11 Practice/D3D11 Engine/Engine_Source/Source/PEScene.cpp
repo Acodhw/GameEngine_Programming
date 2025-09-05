@@ -39,11 +39,11 @@ namespace PracticeEngine {
 			l->LateUpdate();
 		}
 	}
-	void Scene::Render(HDC hdc) 
+	void Scene::Render() 
 	{
 		for (Layer* l : mLayers) {
 			if (l == nullptr) continue;
-			l->Render(hdc);
+			l->Render();
 		}
 	}
 

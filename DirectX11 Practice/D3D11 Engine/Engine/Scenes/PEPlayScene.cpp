@@ -23,7 +23,7 @@ namespace PracticeEngine {
     }
     PlayScene::~PlayScene()
     {
-        
+
     }
     void PlayScene::Initialize()
     {
@@ -96,9 +96,9 @@ namespace PracticeEngine {
     {
         Scene::LateUpdate();
     }
-    void PlayScene::Render(HDC hdc)
+    void PlayScene::Render()
     {
-        Scene::Render(hdc);
+        Scene::Render();
     }
     void PlayScene::OnEnter()
     {

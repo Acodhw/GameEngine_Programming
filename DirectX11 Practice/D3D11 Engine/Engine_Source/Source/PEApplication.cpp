@@ -66,9 +66,9 @@ namespace PracticeEngine {
 	void Application::Render() {
 		mGraphicDevice->Draw();
 		
-		SceneManager::Render(mBackHDC);
-		UIManager::Render(mBackHDC);
-		CollisionManager::Render(mBackHDC);
+		SceneManager::Render();
+		UIManager::Render();
+		CollisionManager::Render();
 		infoTitle();
 	}
 
@@ -122,7 +122,7 @@ namespace PracticeEngine {
 		mHwmd = hwnd;
 		mHdc = GetDC(mHwmd);
 
-		RECT rect = { 0, 0, width, height };
+		RECT rect = { 0, 0, (LONG)width, (LONG)height };
 		AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false); // 윈도우 작업영역을 Rect로 변경(&RECT, 윈도우스타일, 메뉴바)
 
 		mWidth = rect.right - rect.left;

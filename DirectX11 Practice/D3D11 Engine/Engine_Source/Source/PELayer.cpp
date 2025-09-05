@@ -33,12 +33,12 @@ namespace PracticeEngine
 			g->LateUpdate();
 		}
 	}
-	void Layer::Render(HDC hdc) {
+	void Layer::Render() {
 		for (GameObject* g : mGameObjects) {
 			if (g == nullptr) continue;
 			GameObject::eState state = g->state;
 			if (state == GameObject::eState::Paused || state == GameObject::eState::Dead) continue;
-			g->Render(hdc);
+			g->Render();
 		}
 	}
 

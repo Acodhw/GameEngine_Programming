@@ -30,7 +30,7 @@ namespace PracticeEngine {
 
 	}
 
-	void Collider::Render(HDC hdc) {
+	void Collider::Render() {
 	
 	}
 

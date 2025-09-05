@@ -1,22 +1,21 @@
 #include "PERenderer.h"
 
+
 namespace PracticeEngine::Renderer {
 	Camera* mainCamera = nullptr;
-	Vertex vertexes[3] = {};
+	std::vector<Graphics::Vertex> vertexes = {};
 	std::vector<UINT> indices;
 
-	ID3D11Buffer* vertexBuffer = nullptr;
-	ID3D11Buffer* indexBuffer = nullptr;
-	ID3D11Buffer* constantBuffer = nullptr;
+	Graphics::VertexBuffer vertexBuffer;
+	Graphics::IndexBuffer indexBuffer;
+	Graphics::ConstantBuffer constantBuffers[(UINT)eCBType::End] = {};
 
-	ID3DBlob* vsBlob = nullptr;
-	ID3D11VertexShader* vsShader = nullptr;
-	ID3DBlob* psBlob = nullptr;
-	ID3D11PixelShader* psShader = nullptr;
+	ID3D11Buffer* constantBuffer = nullptr;
 	ID3D11InputLayout* inputLayouts = nullptr;
 
 	void LoadTriangleMesh()
 	{
+		Renderer::vertexes.resize(3);
 		Renderer::vertexes[0].pos = Vector3(0.0f, 0.5f, 0.0f);
 		Renderer::vertexes[0].color = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
 
@@ -36,20 +35,26 @@ namespace PracticeEngine::Renderer {
 		LoadTriangleMesh();
 	}
 
+	void LoadShaders()
+	{
+		PracticeEngine::Resources::Load<Graphics::Shader>(L"TriangleShader", L"..\\Shader_SOURCE\\Triangle");
+	}
+
+	void LoadConstantBuffers()
+	{
+		constantBuffers[(UINT)eCBType::Transform].Create(eCBType::Transform, sizeof(Vector4));
+
+	}
+
 	void Initialize()
 	{
 		LoadMeshes();
+		LoadShaders();
+		LoadConstantBuffers();
 	}
 
 	void Release()
 	{
-		vertexBuffer->Release();
-		vsBlob->Release();
-		vsShader->Release();
-		psBlob->Release();
-		psShader->Release();
 		inputLayouts->Release();
-		indexBuffer->Release();
-		constantBuffer->Release();
 	}
 }

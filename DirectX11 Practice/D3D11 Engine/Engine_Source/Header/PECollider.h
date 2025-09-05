@@ -12,7 +12,7 @@ namespace PracticeEngine {
 		virtual void Initialize();
 		virtual void Update();
 		virtual void LateUpdate();
-		virtual void Render(HDC hdc);
+		virtual void Render();
 
 		virtual void OnCollisionEnter(Collider* other);
 		virtual void OnCollisionStay(Collider* other);
@@ -23,9 +23,9 @@ namespace PracticeEngine {
 		const Vector2& offset = mOffset;
 		void SetOffset(Vector2 ofs) { mOffset = ofs; }
 
-		eColliderType GetColliderType() { return mType; }
+		eColliderType GetColliderType() const { return mType; }
 
-		Vector2 GetSize() { return mSize; }
+		Vector2 GetSize() const { return mSize; }
 		void SetSize(Vector2 size) { mSize = size; }
 
 	private:

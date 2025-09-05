@@ -21,8 +21,8 @@ namespace PracticeEngine
 		GameObject::LateUpdate();
 	}
 
-	void SpriteObj::Render(HDC hdc)
+	void SpriteObj::Render()
 	{
-		GameObject::Render(hdc);
+		GameObject::Render();
 	}
 }
