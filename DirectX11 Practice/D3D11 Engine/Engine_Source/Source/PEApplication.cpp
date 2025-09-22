@@ -17,59 +17,100 @@ namespace PracticeEngine {
 		, mHdc(nullptr)
 		, mWidth(0)
 		, mHeight(0)
-		, mBackHDC(nullptr)
-		, mBackBuffer(nullptr)
+		, mBackHDC(NULL)
+		, mBackBuffer(NULL)
+		, mbLoaded(false)
 		, title(new wchar_t[MAX_LOADSTRING])
-	{		
+	{
+
 	}
-	
-	Application::~Application() {
+
+	Application::~Application()
+	{
 		delete[] title;
 	}
 
 	void Application::Initialize(HWND hwnd, UINT width, UINT height)
 	{
-		adjustWindowRect(hwnd, width, height);
-		createBuffer(width, height);
-		initializeEtc();
+		AdjustWindowRect(hwnd, width, height);
+		InitializeEtc();
 
 		mGraphicDevice = std::make_unique<Graphics::GraphicsDevice_DX11>();
-		Renderer::Initialize();
+		//Renderer::Initialize();
 		mGraphicDevice->Initialize();
 
-		Fmod::Initialize();		
+		Fmod::Initialize();
 		CollisionManager::Initialize();
 		UIManager::Initialize();
 		SceneManager::Initialize();
-		
 	}
 
+	void Application::AdjustWindowRect(HWND hwnd, UINT width, UINT height)
+	{
+		mHwmd = hwnd;
+		mHdc = GetDC(hwnd);
 
-	void Application::Run() {
+		RECT rect = { 0, 0, (LONG)width, (LONG)height };
+		::AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
+
+		mWidth = rect.right - rect.left;
+		mHeight = rect.bottom - rect.top;
+
+		SetWindowPos(hwnd, nullptr, 0, 0, mWidth, mHeight, 0);
+		ShowWindow(hwnd, true);
+		GetWindowText(mHwmd, title, MAX_LOADSTRING);
+	}
+
+	void Application::InitializeEtc()
+	{
+		Input::Initailze();
+		Time::Initailze();
+	}
+
+	void Application::Run()
+	{
+		if (mbLoaded == false)
+			mbLoaded = true;
+
 		Update();
 		LateUpdate();
 		Render();
+
 		Destroy();
 	}
+	void Application::Update()
+	{
+		Time::Update();
+		Input::Update();	
 
-	void Application::Update() {
-		Time::Update(); // 시간 처리를 맨 앞에서
-		Input::Update(); // 키 처리를 플레이어 처리보다 빠르게
+		CollisionManager::Update();
+		UIManager::Update();
 		SceneManager::Update();
-
 	}
-	
-	void Application::LateUpdate() {
+	void Application::LateUpdate()
+	{
+		CollisionManager::LateUpdate();
+		UIManager::LateUpdate();
 		SceneManager::LateUpdate();
 	}
+	void Application::Render()
+	{
+		Graphics::GetDevice()->ClearRenderTargetView();
+		Graphics::GetDevice()->ClearDepthStencilView();
+		Graphics::GetDevice()->BindViewPort();
+		Graphics::GetDevice()->BindDefaultRenderTarget();
 
-	void Application::Render() {
-		mGraphicDevice->Draw();
-		
-		SceneManager::Render();
-		UIManager::Render();
 		CollisionManager::Render();
+		UIManager::Render();
+		SceneManager::Render();
 		infoTitle();
+
+		Graphics::GetDevice()->Present();
+	}
+
+	void Application::Destroy()
+	{
+		SceneManager::Destroy();
 	}
 
 	void Application::Release()
@@ -81,74 +122,13 @@ namespace PracticeEngine {
 		Renderer::Release();
 	}
 
-	void Application::Destroy()
-	{
-		SceneManager::Destroy();
-	}
-
 	void Application::infoTitle() {
-		float fps = 1.0f / Time::DeltaTime;	
+		float fps = 1.0f / Time::DeltaTime;
 
 		wchar_t str[MAX_LOADSTRING] = L"";
 		swprintf(str, MAX_LOADSTRING, L"%ws \tFPS : %d", title, (int)fps);
 		int len = wcsnlen_s(str, MAX_LOADSTRING);
 
 		SetWindowText(mHwmd, str);
-	}
-
-
-	// private확장자
-
-	void Application::clearRenderTarget()
-	{
-		//clear
-		HBRUSH grayBrush = (HBRUSH)CreateSolidBrush(RGB(128, 128, 128));
-		HBRUSH oldBrush = (HBRUSH)SelectObject(mBackHDC, grayBrush);
-
-		::Rectangle(mBackHDC, -1, -1, 1601, 901);
-
-		(HBRUSH)SelectObject(mBackHDC, oldBrush);
-		DeleteObject(grayBrush);
-	}
-
-	void Application::copyRenderTarget(HDC source, HDC dest)
-	{
-		BitBlt(dest, 0, 0, mWidth, mHeight
-			, source, 0, 0, SRCCOPY);
-	}
-
-	void Application::adjustWindowRect(HWND hwnd, UINT width, UINT height)
-	{
-		mHwmd = hwnd;
-		mHdc = GetDC(mHwmd);
-
-		RECT rect = { 0, 0, (LONG)width, (LONG)height };
-		AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false); // 윈도우 작업영역을 Rect로 변경(&RECT, 윈도우스타일, 메뉴바)
-
-		mWidth = rect.right - rect.left;
-		mHeight = rect.bottom - rect.top;
-
-		SetWindowPos(mHwmd, nullptr, 0, 0, rect.right - rect.left, rect.bottom - rect.top, 0);
-		ShowWindow(mHwmd, true);
-		GetWindowText(mHwmd, title, MAX_LOADSTRING);
-	}
-
-	void Application::createBuffer(UINT width, UINT height)
-	{
-		// 윈도우 해상도에 맞는 백버퍼 생성
-		mBackBuffer = CreateCompatibleBitmap(mHdc, width, height);
-
-		//백버퍼 가르킬 dc 생성
-		mBackHDC = CreateCompatibleDC(mHdc);
-
-		HBITMAP oldBitmap = (HBITMAP)SelectObject(mBackHDC, mBackBuffer); // Buffer에다가 DC 바꿔주고
-		DeleteObject(oldBitmap); // 이전 DC는 삭제
-	}
-
-	void Application::initializeEtc()
-	{
-		Input::Initailze();
-		Time::Initailze();
-		SceneManager::Initialize();
 	}
 }

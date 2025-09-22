@@ -61,7 +61,7 @@ namespace PracticeEngine {
 	{
 		SetName(name);
 		mTexture = spriteTexture;
-		int w = spriteTexture->width;
+		int w = 64;
 		for (size_t i = 0; i < spriteLength; i++) {
 			Sprite sprite = {};
 			sprite.leftTop.x = leftTop.x + ((int)(size.x * i) % w);

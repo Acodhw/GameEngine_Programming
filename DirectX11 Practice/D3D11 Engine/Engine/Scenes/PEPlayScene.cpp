@@ -15,10 +15,14 @@
 #include "PETile.h"
 #include "PETileMapRenderer.h"
 #include "PECollisionManager.h"
+#include "PEGraphicsDevice_DX11.h"
+#include "PEMaterial.h"
+#include "PEPlayer.h"
 #include <io.h> // for _access
 
 namespace PracticeEngine {
     PlayScene::PlayScene()
+        : mPlayer(nullptr)
     {
     }
     PlayScene::~PlayScene()
@@ -27,6 +31,11 @@ namespace PracticeEngine {
     }
     void PlayScene::Initialize()
     {
+        mPlayer = Object::Instantiate<Player>(eLayerType::Player);
+        Object::DontDestroyOnLoad(mPlayer);
+        SpriteRenderer* sr = mPlayer->AddComponent<SpriteRenderer>();
+        sr->SetMaterial(Resources::Find<Material>(L"SpriteMaterial"));
+        sr->SetSprite(Resources::Find<Graphics::Texture>(L"Player"));
         //FILE* pFile = nullptr;
         //_wfopen_s(&pFile, L"..\\Resources\\Test.tile", L"rb");
         //if (pFile) {

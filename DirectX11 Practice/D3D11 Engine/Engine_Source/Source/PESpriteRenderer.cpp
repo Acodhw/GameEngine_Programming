@@ -3,24 +3,29 @@
 #include "PEGameObject.h"
 #include "PERenderer.h"
 #include "PECamera.h"
+#include "PEResources.h"
 
 namespace PracticeEngine {
 	SpriteRenderer::SpriteRenderer()
 		: Component(eComponentType::SpriteRenderer)
-		,mTexture(nullptr)
-		, mSize(Vector2::One)
+		, mSprite(nullptr)
+		, mMaterial(nullptr)
+		, mMesh(nullptr)
 	{}
+
 	SpriteRenderer::~SpriteRenderer(){}
 
-	void SpriteRenderer::Initialize() {}
+	void SpriteRenderer::Initialize() {
+		mMesh = Resources::Find<Mesh>(L"RectMesh");
+	}
 	void SpriteRenderer::Update() {}
 	void SpriteRenderer::LateUpdate() {}
 	void SpriteRenderer::Render() {
 
-		if (mTexture == nullptr) {
-			MessageBox(nullptr, L"Texture Loading Error!\nTexture is Empty!", L"Error!", MB_OK);
-			assert(false);
-		}
+		//if (mTexture == nullptr) {
+		//	MessageBox(nullptr, L"Texture Loading Error!\nTexture is Empty!", L"Error!", MB_OK);
+		//	assert(false);
+		//}
 
 		//Transform* tr = GetOwner()->GetComponent<Transform>();
 		//Vector2 pos = tr->GetPosition();
@@ -86,8 +91,18 @@ namespace PracticeEngine {
 		//		, nullptr);
 		//	break;
 		//}
-	}
 
-	
+		if (mMesh)
+			mMesh->Bind();
+
+		if (mMaterial)
+			mMaterial->BindShader();
+
+		if (mSprite)
+			mSprite->Bind(eShaderStage::PS, (UINT)eTextureType::Albedo);
+
+		if (mMesh)
+			Graphics::GetDevice()->DrawIndexed(mMesh->GetIndexCount(), 0, 0);
+	}
 }
 

@@ -29,7 +29,7 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름�
 ATOM                MyRegisterClass(HINSTANCE hInstance, const wchar_t* name, WNDPROC proc);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-LRESULT CALLBACK    WndTileProc(HWND, UINT, WPARAM, LPARAM);
+//LRESULT CALLBACK    WndTileProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,             // 프로그램의 인스턴스 핸들(메모리에 저장된 이 프로그램의 공간)
@@ -49,7 +49,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,             // 프로그램의 �
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);             // 타이틀 이름 불러오기
     LoadStringW(hInstance, IDC_ENGINEPRACTICE, szWindowClass, MAX_LOADSTRING);  // 창 클래스 이름 불러오기
     MyRegisterClass(hInstance, szWindowClass, WndProc);
-    MyRegisterClass(hInstance, L"TILEMAP", WndTileProc);                                                 // 새로운 레지스터 클래스에 인스턴스 대입 (윈도우 정보 보관)
+//    MyRegisterClass(hInstance, L"TILEMAP", WndTileProc);                                                 // 새로운 레지스터 클래스에 인스턴스 대입 (윈도우 정보 보관)
 
     // 애플리케이션 초기화를 수행합니다:
     if (!InitInstance (hInstance, nCmdShow)) // 창 생성이 성공적으로 수행되었는지 확인합니다
@@ -71,6 +71,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,             // 프로그램의 �
     // 리턴 == true : message 있음, 리턴 == false : message 없음 알려줌
     // 메세지큐 신경 없이 항상 작동
 
+    PracticeEngine::LoadScenes();
 
     while (true) // 메세지 큐의 여부와 상관없이 작동하는 루프
     {
@@ -104,7 +105,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,             // 프로그램의 �
             DispatchMessage(&msg);      // 메세지를 적용
         }
     }*/
-    Gdiplus::GdiplusShutdown(gpToken); // 메모리에서 토큰 제거
     application.Release();
     return (int) msg.wParam;
 }
@@ -157,10 +157,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, 0, width, height, nullptr, nullptr, hInstance, nullptr);
 
-    HWND ToolHwnd = CreateWindowW(L"TILEMAP", L"TileMap", WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, 0, 480, 960, nullptr, nullptr, hInstance, nullptr);
+    //HWND ToolHwnd = CreateWindowW(L"TILEMAP", L"TileMap", WS_OVERLAPPEDWINDOW,
+    //    CW_USEDEFAULT, 0, 480, 960, nullptr, nullptr, hInstance, nullptr);
 
-    application.Initialize(hWnd, width, height);
+
     //2개 이상 윈도우 생성 가능
     // HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
     //     CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
@@ -173,34 +173,28 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     ShowWindow(hWnd, nCmdShow);  // 윈도우 보이기
     UpdateWindow(hWnd);          // 윈도우 창 업데이트
 
+    application.Initialize(hWnd, width, height);
+    //PracticeEngine::Scene* activeScene = PracticeEngine::SceneManager::GetActiveScene();
+    //std::wstring name = activeScene->GetName();
+    //if (name == L"ToolScene")
+    //{
+    //    ShowWindow(ToolHwnd, nCmdShow);
+    //    UpdateWindow(ToolHwnd);
 
-   
+    //    //Tile 윈도우 크기 조정
+    //    PracticeEngine::Graphics::Texture* texture
+    //        = PracticeEngine::Resources::Find<PracticeEngine::Graphics::Texture>(L"TL");
 
-    Gdiplus::GdiplusStartup(&gpToken, &gpsi, NULL); // gdiplus로 이미지 불러오기 시작(포인터 토큰, gdi인풋, gdi 아웃풋)
+    //    RECT rect = { 0, 0, texture->width, texture->height };
+    //    AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 
-    PracticeEngine::LoadScenes(); // 씬 로딩
+    //    UINT toolWidth = rect.right - rect.left;
+    //    UINT toolHeight = rect.bottom - rect.top + texture->height;
 
-    PracticeEngine::Scene* activeScene = PracticeEngine::SceneManager::GetActiveScene();
-    std::wstring name = activeScene->GetName();
-    if (name == L"ToolScene")
-    {
-        ShowWindow(ToolHwnd, nCmdShow);
-        UpdateWindow(ToolHwnd);
-
-        //Tile 윈도우 크기 조정
-        PracticeEngine::Graphics::Texture* texture
-            = PracticeEngine::Resources::Find<PracticeEngine::Graphics::Texture>(L"TL");
-
-        RECT rect = { 0, 0, texture->width, texture->height };
-        AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
-
-        UINT toolWidth = rect.right - rect.left;
-        UINT toolHeight = rect.bottom - rect.top + texture->height;
-
-        SetWindowPos(ToolHwnd, nullptr, width, 0, toolWidth, toolHeight, 0);
-        ShowWindow(ToolHwnd, true);
-        UpdateWindow(ToolHwnd);
-    }
+    //    SetWindowPos(ToolHwnd, nullptr, width, 0, toolWidth, toolHeight, 0);
+    //    ShowWindow(ToolHwnd, true);
+    //    UpdateWindow(ToolHwnd);
+    //}
     return TRUE;
 }
 

@@ -4,6 +4,11 @@
 #include "PERenderer.h"
 #include "PEResources.h"
 #include "PETexture.h"
+#include "PEApplication.h"
+#include "PETitleScene.h"
+#include "PEPlayScene.h"
+
+extern PracticeEngine::Application application;
 
 
 namespace PracticeEngine {
@@ -28,6 +33,16 @@ namespace PracticeEngine {
 
 	void LoadingScene::Update()
 	{
+		
+	}
+
+	void LoadingScene::LateUpdate()
+	{
+
+	}
+
+	void LoadingScene::Render()
+	{
 		if (mbLoadCompleted)
 		{
 			//만약 메인쓰레드가 종료되는데 자식쓰레드가 남아있다면
@@ -41,16 +56,6 @@ namespace PracticeEngine {
 		}
 	}
 
-	void LoadingScene::LateUpdate()
-	{
-
-	}
-
-	void LoadingScene::Render()
-	{
-
-	}
-
 	void LoadingScene::OnEnter()
 	{
 
@@ -62,13 +67,19 @@ namespace PracticeEngine {
 	}
 	void LoadingScene::resourcesLoad(std::mutex& m) // mutex : 임계 영역 - cpu 연산에 한 쓰레드가 이걸 이용할 때, 다른 쓰레드는 대기상태
 	{
+		while (true)
+		{
+			if (application.IsLoaded() == true)
+				break;
+		}
 		m.lock();
 		{
-			Resources::Load<Graphics::Texture>(L"BG", L"..\\Resources\\CloudOcean.png");
-			Resources::Load<Graphics::Texture>(L"PL", L"..\\Resources\\Player_idle.png");
-			Resources::Load<Graphics::Texture>(L"PL_S", L"..\\Resources\\Player_idle-Sheet.png");
-			Resources::Load<Graphics::Texture>(L"PL_A", L"..\\Resources\\Player_idle-Sheet_Aplha.bmp");
-			Resources::Load<Graphics::Texture>(L"TL", L"..\\Resources\\Grasstile.png");
+			Resources::Load<Graphics::Texture>(L"Player", L"..\\Resources\\CloudOcean.png");
+		
+			Renderer::Initialize();
+
+			SceneManager::CreateScene<TitleScene>(L"TitleScene");
+			SceneManager::CreateScene<PlayScene>(L"PlayScene");
 		}
 		m.unlock();
 

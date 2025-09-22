@@ -2,6 +2,8 @@
 #include "CommonInclude.h"
 #include "PETexture.h"
 #include "PEComponent.h"
+#include "PEMaterial.h"
+#include "PEMesh.h"
 
 namespace PracticeEngine {
 	// 스프라이트(이미지)를 그리는 컴포넌트
@@ -16,13 +18,13 @@ namespace PracticeEngine {
 		void LateUpdate() override;
 		void Render() override;
 
-		// 텍스쳐를 지정합니다
-		void SetTexture(Graphics::Texture* tx) { mTexture = tx; }
-		// 이미지 크기를 지정합니다
-		void SetSize(Math::Vector2 size) { mSize = size; }
+		void SetSprite(Graphics::Texture* sprite) { mSprite = sprite; }
+		void SetMaterial(Material* material) { mMaterial = material; }
+
 	private:
-		Graphics::Texture* mTexture;
-		Math::Vector2 mSize;
+		Graphics::Texture* mSprite;
+		Material* mMaterial;
+		Mesh* mMesh;
 	};
 }
 

@@ -16,8 +16,9 @@ namespace PracticeEngine {
 
 		void OnEnter() override;
 		void OnExit() override;
-	private:
 
+	private:
+		class Player* mPlayer;
 	};
 }
 

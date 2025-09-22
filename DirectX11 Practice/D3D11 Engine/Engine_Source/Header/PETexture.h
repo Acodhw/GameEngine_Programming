@@ -1,4 +1,8 @@
 #pragma once
+#include <DirectXTex.h>
+#include <DirectXTex.inl>
+
+#include "PEGraphicsDevice_DX11.h"
 #include "PEResource.h"
 
 namespace PracticeEngine::Graphics {
@@ -7,38 +11,24 @@ namespace PracticeEngine::Graphics {
 	class Texture : public Resource
 	{
 	public:
-		enum class eTextureType
-		{
-			BMP,
-			PNG,
-			None,
-		};
-
-		static Texture* Create(const std::wstring& name, UINT width, UINT height);
-
 		Texture();
 		~Texture();
 
 		virtual HRESULT Save(const std::wstring& path) override;
 		virtual HRESULT Load(const std::wstring& path) override;
-		//COLORREF GetPixel(int x, int y);
 
-		const UINT& width = mWidth;
-		const UINT& height = mHeight;
+		void Bind(eShaderStage stage, UINT startSlot);
 
-		void SetWidth(UINT width) { mWidth = width; }
-		void SetHeight(UINT height) { mHeight = height; }
-		eTextureType GetTextureType() const { return mT_Type; }
-
+		//std::wstring 
 
 	private:
-		bool mbAlpha;
+		ScratchImage mImage;
 
+		D3D11_TEXTURE2D_DESC mDesc;
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> mTexture;
 
-		eTextureType mT_Type; // 이미지의 타입
-
-		UINT mWidth; // 이미지의 가로 크기
-		UINT mHeight; // 이미지의 세로 크기
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mSRV;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> mRTV;
 	};
 
 }

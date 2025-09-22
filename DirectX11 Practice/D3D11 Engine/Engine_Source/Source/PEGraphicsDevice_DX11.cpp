@@ -2,7 +2,10 @@
 #include "PEApplication.h"
 #include "PERenderer.h"
 #include "PEShader.h"
+#include "PEMesh.h"
 #include "PEResources.h"
+#include "PEMaterial.h"
+#include "PETexture.h"
 
 extern PracticeEngine::Application application;
 
@@ -89,6 +92,14 @@ namespace PracticeEngine::Graphics {
 		return true;
 	}
 
+	bool GraphicsDevice_DX11::CreateSamplerState(const D3D11_SAMPLER_DESC* pSamplerDesc, ID3D11SamplerState** ppSamplerState)
+	{
+		if (FAILED(mDevice->CreateSamplerState(pSamplerDesc, ppSamplerState)))
+			return false;
+
+		return true;
+	}
+
 	bool GraphicsDevice_DX11::CreateVertexShader(const std::wstring& fileName, ID3DBlob** ppCode, ID3D11VertexShader** ppVertexShader)
 	{
 		DWORD shaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
@@ -158,13 +169,46 @@ namespace PracticeEngine::Graphics {
 
 		return true;
 	}
+	bool GraphicsDevice_DX11::CreateShaderResourceView(ID3D11Resource* pResource, const D3D11_SHADER_RESOURCE_VIEW_DESC* pDesc, ID3D11ShaderResourceView** ppSRView)
+	{
+		if (FAILED(mDevice->CreateShaderResourceView(pResource, pDesc, ppSRView)))
+			return false;
 
-	void GraphicsDevice_DX11::SetDataBuffer(ID3D11Buffer* buffer, void* data, UINT size)
+		return true;
+	}
+
+	void GraphicsDevice_DX11::SetDataGpuBuffer(ID3D11Buffer* buffer, void* data, UINT size)
 	{
 		D3D11_MAPPED_SUBRESOURCE sub = {};
 		mContext->Map(buffer, 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &sub);
 		memcpy(sub.pData, data, size);
 		mContext->Unmap(buffer, 0);
+	}
+
+	void GraphicsDevice_DX11::SetShaderResource(eShaderStage stage, UINT startSlot, ID3D11ShaderResourceView** ppSRV)
+	{
+		if ((UINT)eShaderStage::VS & (UINT)stage)
+			mContext->VSSetShaderResources(startSlot, 1, ppSRV);
+
+		if ((UINT)eShaderStage::HS & (UINT)stage)
+			mContext->HSSetShaderResources(startSlot, 1, ppSRV);
+
+		if ((UINT)eShaderStage::DS & (UINT)stage)
+			mContext->DSSetShaderResources(startSlot, 1, ppSRV);
+
+		if ((UINT)eShaderStage::GS & (UINT)stage)
+			mContext->GSSetShaderResources(startSlot, 1, ppSRV);
+
+		if ((UINT)eShaderStage::PS & (UINT)stage)
+			mContext->PSSetShaderResources(startSlot, 1, ppSRV);
+
+		if ((UINT)eShaderStage::CS & (UINT)stage)
+			mContext->CSSetShaderResources(startSlot, 1, ppSRV);
+	}
+
+	void GraphicsDevice_DX11::BindInputLayout(ID3D11InputLayout* pInputLayout)
+	{
+		mContext->IASetInputLayout(pInputLayout);
 	}
 
 	void GraphicsDevice_DX11::BindPrimitiveTopology(const D3D11_PRIMITIVE_TOPOLOGY topology)
@@ -229,6 +273,68 @@ namespace PracticeEngine::Graphics {
 		}
 	}
 
+	void GraphicsDevice_DX11::BindSampler(eShaderStage stage, UINT StartSlot, UINT NumSamplers, ID3D11SamplerState* const* ppSamplers)
+	{
+		if (eShaderStage::VS == stage)
+			mContext->VSSetSamplers(StartSlot, NumSamplers, ppSamplers);
+
+		if (eShaderStage::HS == stage)
+			mContext->HSSetSamplers(StartSlot, NumSamplers, ppSamplers);
+
+		if (eShaderStage::DS == stage)
+			mContext->DSSetSamplers(StartSlot, NumSamplers, ppSamplers);
+
+		if (eShaderStage::GS == stage)
+			mContext->GSSetSamplers(StartSlot, NumSamplers, ppSamplers);
+
+		if (eShaderStage::PS == stage)
+			mContext->PSSetSamplers(StartSlot, NumSamplers, ppSamplers);
+	}
+
+	void GraphicsDevice_DX11::BindSamplers(UINT StartSlot, UINT NumSamplers, ID3D11SamplerState* const* ppSamplers)
+	{
+		BindSampler(eShaderStage::VS, StartSlot, NumSamplers, ppSamplers);
+		BindSampler(eShaderStage::HS, StartSlot, NumSamplers, ppSamplers);
+		BindSampler(eShaderStage::DS, StartSlot, NumSamplers, ppSamplers);
+		BindSampler(eShaderStage::GS, StartSlot, NumSamplers, ppSamplers);
+		BindSampler(eShaderStage::PS, StartSlot, NumSamplers, ppSamplers);
+	}
+
+	void GraphicsDevice_DX11::BindViewPort()
+	{
+		D3D11_VIEWPORT viewPort =
+		{
+			0, 0,
+			(float)application.GetResolution().x, (float)application.GetResolution().y,
+			0.0f, 1.0f
+		};
+
+		mContext->RSSetViewports(1, &viewPort);
+	}
+
+	void GraphicsDevice_DX11::BindRenderTargets(UINT NumViews
+		, ID3D11RenderTargetView* const* ppRenderTargetViews
+		, ID3D11DepthStencilView* pDepthStencilView)
+	{
+		mContext->OMSetRenderTargets(NumViews, ppRenderTargetViews, pDepthStencilView);
+	}
+
+	void GraphicsDevice_DX11::BindDefaultRenderTarget()
+	{
+		mContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), mDepthStencilView.Get());
+	}
+
+	void GraphicsDevice_DX11::ClearRenderTargetView()
+	{
+		FLOAT backgroundColor[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
+		mContext->ClearRenderTargetView(mRenderTargetView.Get(), backgroundColor);
+	}
+
+	void GraphicsDevice_DX11::ClearDepthStencilView()
+	{
+		mContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	}
+
 	void GraphicsDevice_DX11::Initialize()
 	{
 
@@ -289,62 +395,47 @@ namespace PracticeEngine::Graphics {
 
 		if (!(CreateDepthStencilView(mDepthStencil.Get(), nullptr, mDepthStencilView.GetAddressOf())))
 			assert(NULL && "Create depthstencilview failed!");
-
-#pragma region inputLayout Desc
-		D3D11_INPUT_ELEMENT_DESC inputLayoutDesces[2] = {};
-
-		inputLayoutDesces[0].AlignedByteOffset = 0;
-		inputLayoutDesces[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-		inputLayoutDesces[0].InputSlot = 0;
-		inputLayoutDesces[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-		inputLayoutDesces[0].SemanticName = "POSITION";
-		inputLayoutDesces[0].SemanticIndex = 0;
-
-		inputLayoutDesces[1].AlignedByteOffset = 12;
-		inputLayoutDesces[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-		inputLayoutDesces[1].InputSlot = 0;
-		inputLayoutDesces[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-		inputLayoutDesces[1].SemanticName = "COLOR";
-		inputLayoutDesces[1].SemanticIndex = 0;
-#pragma endregion
-		Graphics::Shader* triangle = Resources::Find<Graphics::Shader>(L"TriangleShader");
-		if (!(CreateInputLayout(inputLayoutDesces, 2
-			, triangle->GetVSBlob()->GetBufferPointer()
-			, triangle->GetVSBlob()->GetBufferSize()
-			, &Renderer::inputLayouts)))
-			assert(NULL && "Create input layout failed!");
 	}
 
 	void GraphicsDevice_DX11::Draw()
 	{
-		FLOAT backgroundColor[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
-		mContext->ClearRenderTargetView(mRenderTargetView.Get(), backgroundColor);
-		mContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+		Mesh* mesh = Resources::Find<Mesh>(L"RectMesh");
+		mesh->Bind();
 
-		D3D11_VIEWPORT viewPort =
-		{
-			0, 0, (float)application.GetResolution().x, (float)application.GetResolution().y,
-			0.0f, 1.0f
-		};
-		mContext->RSSetViewports(1, &viewPort);
-		mContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), mDepthStencilView.Get());
-
-		BindConstantBuffer(eShaderStage::VS, eCBType::Transform, Renderer::constantBuffer);
-
-		mContext->IASetInputLayout(Renderer::inputLayouts);
-		mContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		
-		Renderer::mesh->Bind();
-
-		Vector4 pos(0.5f, 0.0f, 0.0f, 1.0f);
+		Vector4 pos(-0.2f, 0.0f, 0.0f, 1.0f);
 		Renderer::constantBuffers[(UINT)eCBType::Transform].SetData(&pos);
 		Renderer::constantBuffers[(UINT)eCBType::Transform].Bind(eShaderStage::VS);
 
-		Graphics::Shader* triangle = Resources::Find<Graphics::Shader>(L"TriangleShader");
-		triangle->Bind();
+		Material* material = Resources::Find<Material>(L"SpriteMaterial");
+		material->Bind();
 
-		mContext->Draw(3, 0);
+		Graphics::Texture* texture = Resources::Find<Graphics::Texture>(L"Player");
+		if (texture)
+			texture->Bind(eShaderStage::PS, 0);
 
+		mContext->DrawIndexed(6, 0, 0);
+
+		// Draw Triangle
+		mesh = Resources::Find<Mesh>(L"TriangleMesh");
+		mesh->Bind();
+
+		pos = Vector4(0.2f, 0.0f, 0.0f, 1.0f);
+		Renderer::constantBuffers[(UINT)eCBType::Transform].SetData(&pos);
+		Renderer::constantBuffers[(UINT)eCBType::Transform].Bind(eShaderStage::VS);
+
+		material = PracticeEngine::Resources::Find<Material>(L"TriangleMaterial");
+		material->Bind();
+
+		mContext->DrawIndexed(3, 0, 0);
+	}
+	void GraphicsDevice_DX11::DrawIndexed(UINT IndexCount, UINT StartIndexLocation, INT BaseVertexLocation)
+	{
+		mContext->DrawIndexed(IndexCount, StartIndexLocation, BaseVertexLocation);
+	}
+
+	void GraphicsDevice_DX11::Present()
+	{
+		// Present the backbuffer
 		mSwapChain->Present(1, 0);
 	}
 }

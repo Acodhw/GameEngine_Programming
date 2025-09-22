@@ -207,107 +207,107 @@ namespace PracticeEngine {
 }
 
 // ≈∏¿œ∏  º±≈√
-LRESULT CALLBACK WndTileProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	switch (message)
-	{
-	case WM_LBUTTONDOWN:
-	{
-		POINT mousePos = { };
-		GetCursorPos(&mousePos);
-		ScreenToClient(hWnd, &mousePos);
-
-		PracticeEngine::Vector2 mousePosition;
-		mousePosition.x = mousePos.x;
-		mousePosition.y = mousePos.y;
-
-		int idxX = mousePosition.x / PracticeEngine::TileMapRenderer::OriginTileSize.x;
-		int idxY = mousePosition.y / PracticeEngine::TileMapRenderer::OriginTileSize.y;
-
-		PracticeEngine::TileMapRenderer::SelectedIndex = PracticeEngine::Vector2(idxX, idxY);
-	}
-	break;
-
-	case WM_PAINT:
-	{
-		PAINTSTRUCT ps;
-		BeginPaint(hWnd, &ps);
-		//HDC hdc = BeginPaint(hWnd, &ps);
-
-		//PracticeEngine::Graphics::Texture* texture
-		//	= PracticeEngine::Resources::Find<PracticeEngine::Graphics::Texture>(L"TL");
-		//if (texture == nullptr) return 0;
-		//switch (texture->GetTextureType())
-		//{
-		//case PracticeEngine::Graphics::Texture::eTextureType::BMP:
-		//{
-		//	if (texture->IsAlpha())
-		//	{
-		//		BLENDFUNCTION func = {};
-		//		func.BlendOp = AC_SRC_OVER;
-		//		func.BlendFlags = 0;
-		//		func.AlphaFormat = AC_SRC_ALPHA;
-		//		func.SourceConstantAlpha = 255; // 0(transparent) ~ 255(Opaque)
-
-		//		AlphaBlend(hdc
-		//			, 0, 0
-		//			, texture->width
-		//			, texture->height
-		//			, texture->GetHdc()
-		//			, 0, 0
-		//			, texture->width
-		//			, texture->height
-		//			, func);
-		//	}
-		//	else
-		//	{
-		//		TransparentBlt(hdc
-		//			, 0, 0
-		//			, texture->width
-		//			, texture->height
-		//			, texture->GetHdc()
-		//			, 0, 0
-		//			, texture->width
-		//			, texture->height
-		//			, RGB(255, 0, 255));
-		//	}
-		//}
-		//break;
-		//case PracticeEngine::Graphics::Texture::eTextureType::PNG:
-		//{
-		//	Gdiplus::ImageAttributes imgAtt = {};
-		//	imgAtt.SetColorKey(Gdiplus::Color(230, 230, 230), Gdiplus::Color(255, 255, 255));
-		//	Gdiplus::Graphics graphcis(hdc);
-		//	graphcis.DrawImage(texture->GetImage()
-		//		, Gdiplus::Rect
-		//		(
-		//			0, 0
-		//			, texture->width
-		//			, texture->height
-		//		)
-		//		, 0, 0
-		//		, texture->width
-		//		, texture->height
-		//		, Gdiplus::UnitPixel
-		//		, nullptr);
-		//}
-		//break;
-
-		//}
-		EndPaint(hWnd, &ps);
-	}
-	break;
-
-	case WM_DESTROY:
-	{
-		PostQuitMessage(0);
-		break;
-	}
-
-	default:
-	{
-		return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-	}
-	return 0;
-}
+//LRESULT CALLBACK WndTileProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+//{
+//	switch (message)
+//	{
+//	case WM_LBUTTONDOWN:
+//	{
+//		POINT mousePos = { };
+//		GetCursorPos(&mousePos);
+//		ScreenToClient(hWnd, &mousePos);
+//
+//		PracticeEngine::Vector2 mousePosition;
+//		mousePosition.x = mousePos.x;
+//		mousePosition.y = mousePos.y;
+//
+//		int idxX = mousePosition.x / PracticeEngine::TileMapRenderer::OriginTileSize.x;
+//		int idxY = mousePosition.y / PracticeEngine::TileMapRenderer::OriginTileSize.y;
+//
+//		PracticeEngine::TileMapRenderer::SelectedIndex = PracticeEngine::Vector2(idxX, idxY);
+//	}
+//	break;
+//
+//	case WM_PAINT:
+//	{
+//		PAINTSTRUCT ps;
+//		BeginPaint(hWnd, &ps);
+//		//HDC hdc = BeginPaint(hWnd, &ps);
+//
+//		//PracticeEngine::Graphics::Texture* texture
+//		//	= PracticeEngine::Resources::Find<PracticeEngine::Graphics::Texture>(L"TL");
+//		//if (texture == nullptr) return 0;
+//		//switch (texture->GetTextureType())
+//		//{
+//		//case PracticeEngine::Graphics::Texture::eTextureType::BMP:
+//		//{
+//		//	if (texture->IsAlpha())
+//		//	{
+//		//		BLENDFUNCTION func = {};
+//		//		func.BlendOp = AC_SRC_OVER;
+//		//		func.BlendFlags = 0;
+//		//		func.AlphaFormat = AC_SRC_ALPHA;
+//		//		func.SourceConstantAlpha = 255; // 0(transparent) ~ 255(Opaque)
+//
+//		//		AlphaBlend(hdc
+//		//			, 0, 0
+//		//			, texture->width
+//		//			, texture->height
+//		//			, texture->GetHdc()
+//		//			, 0, 0
+//		//			, texture->width
+//		//			, texture->height
+//		//			, func);
+//		//	}
+//		//	else
+//		//	{
+//		//		TransparentBlt(hdc
+//		//			, 0, 0
+//		//			, texture->width
+//		//			, texture->height
+//		//			, texture->GetHdc()
+//		//			, 0, 0
+//		//			, texture->width
+//		//			, texture->height
+//		//			, RGB(255, 0, 255));
+//		//	}
+//		//}
+//		//break;
+//		//case PracticeEngine::Graphics::Texture::eTextureType::PNG:
+//		//{
+//		//	Gdiplus::ImageAttributes imgAtt = {};
+//		//	imgAtt.SetColorKey(Gdiplus::Color(230, 230, 230), Gdiplus::Color(255, 255, 255));
+//		//	Gdiplus::Graphics graphcis(hdc);
+//		//	graphcis.DrawImage(texture->GetImage()
+//		//		, Gdiplus::Rect
+//		//		(
+//		//			0, 0
+//		//			, texture->width
+//		//			, texture->height
+//		//		)
+//		//		, 0, 0
+//		//		, texture->width
+//		//		, texture->height
+//		//		, Gdiplus::UnitPixel
+//		//		, nullptr);
+//		//}
+//		//break;
+//
+//		//}
+//		EndPaint(hWnd, &ps);
+//	}
+//	break;
+//
+//	case WM_DESTROY:
+//	{
+//		PostQuitMessage(0);
+//		break;
+//	}
+//
+//	default:
+//	{
+//		return DefWindowProc(hWnd, message, wParam, lParam);
+//	}
+//	}
+//	return 0;
+//}

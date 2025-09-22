@@ -11,6 +11,8 @@ namespace PracticeEngine {
 		Application();
 		~Application();
 		void Initialize(HWND hwmd, UINT width, UINT height);
+		void AdjustWindowRect(HWND hwnd, UINT width, UINT height);
+		void InitializeEtc();
 		void Run();
 
 		void Update();
@@ -29,16 +31,13 @@ namespace PracticeEngine {
 		// 해상도를 가져옵니다
 		Math::Vector2 GetResolution() const { return Math::Vector2(mWidth, mHeight); }
 
+		bool IsLoaded() const { return mbLoaded; }
+		void IsLoaded(bool load) { mbLoaded = load; }
 
-	private:
+	private :
 		void infoTitle(); // 타이틀에 인포 표시
-		void clearRenderTarget();
-		void copyRenderTarget(HDC source, HDC dest);
-		void adjustWindowRect(HWND hwnd, UINT width, UINT height);
-		void createBuffer(UINT width, UINT height);
-		void initializeEtc();
 	private:
-
+		bool mbLoaded;
 		std::unique_ptr<Graphics::GraphicsDevice_DX11> mGraphicDevice; // 그래픽 디바이스
 
 		HWND mHwmd; // 맴버 변수 핸들

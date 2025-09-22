@@ -15,6 +15,7 @@ namespace PracticeEngine::Graphics
 	{
 		Math::Vector3 pos;
 		Math::Vector4 color;
+		Math::Vector2 uv; //texture coordinate
 	};
 
 	enum class eShaderStage
@@ -33,6 +34,33 @@ namespace PracticeEngine::Graphics
 	{
 		None,
 		Transform,
+		End,
+	};
+
+	enum class eSamplerType
+	{
+		Point,
+		Linear,
+		Anisotropic,
+		PostProcess,
+		End,
+	};
+
+	enum class eRenderingMode
+	{
+		Opaque,
+		CutOut,
+		Transparent,
+		PostProcess,
+		End,
+	};
+
+	enum class eTextureType {
+		Albedo,
+		Normal,
+		Specular,
+		Smoothness,
+		Metallic,
 		End,
 	};
 

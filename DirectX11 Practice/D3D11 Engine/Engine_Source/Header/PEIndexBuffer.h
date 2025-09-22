@@ -11,7 +11,10 @@ namespace PracticeEngine::Graphics {
 		bool Create(const std::vector<UINT>& indices);
 		void Bind() const;
 
+		UINT GetIndexCount() const { return mIndexCount; }
+
 	private:
+		UINT mIndexCount;
     };
 }
 
