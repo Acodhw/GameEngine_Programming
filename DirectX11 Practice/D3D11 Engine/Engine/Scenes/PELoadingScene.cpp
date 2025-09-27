@@ -84,6 +84,7 @@ namespace PracticeEngine {
 		m.unlock();
 
 		// complete
+		SceneManager::SetActiveScene(L"LoadingScene");
 		mbLoadCompleted = true;
 
 	}

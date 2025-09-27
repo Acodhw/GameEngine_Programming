@@ -1,14 +1,21 @@
 #pragma once
-#include "PEGameObject.h"
+#include "PEScript.h"
+#include "PETransform.h"
+
 namespace PracticeEngine {
-    class Tile : public GameObject
-    {
+	class CameraScript : public Script
+	{
 	public:
+		CameraScript();
+		~CameraScript();
+
 		void Initialize() override;
 		void Update() override;
 		void LateUpdate() override;
 		void Render() override;
+
 	private:
-    };
+
+	};
 }
 

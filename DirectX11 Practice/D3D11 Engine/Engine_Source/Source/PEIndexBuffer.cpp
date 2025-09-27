@@ -25,6 +25,7 @@ namespace PracticeEngine::Graphics {
 		return true;
 	}
 
+
 	void IndexBuffer::Bind() const
 	{
 		GetDevice()->BindIndexBuffer(buffer.Get(), DXGI_FORMAT_R32_UINT, 0);

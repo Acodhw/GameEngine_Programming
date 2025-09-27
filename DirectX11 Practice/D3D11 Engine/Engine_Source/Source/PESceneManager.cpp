@@ -44,6 +44,34 @@ namespace PracticeEngine {
 		mDontDestroyOnLoad->Destroy();
 	}
 
+	bool SceneManager::SetActiveScene(const std::wstring& name)
+	{
+		if (mActiveScene)
+			mActiveScene->OnExit();
+
+		std::map<std::wstring, Scene*>::iterator iter
+			= mScene.find(name);
+
+		if (iter == mScene.end())
+			return false;
+
+		mActiveScene = iter->second;
+		return true;
+	}
+
+	Scene* SceneManager::LoadScene(const std::wstring& name)
+	{
+		if (mActiveScene)
+			mActiveScene->OnExit();
+
+		if (!SetActiveScene(name))
+			return nullptr;
+
+		mActiveScene->OnEnter();
+
+		return mActiveScene;
+	}
+
 	std::vector<GameObject*> SceneManager::GetGameObjects(eLayerType layer)
 	{
 		std::vector<GameObject*> gameObjects

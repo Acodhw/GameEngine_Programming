@@ -9,6 +9,11 @@
 
 #include "CommonInclude.h"
 
+#define CB_GETBINDSLOT(name) __CBUFFERBINDSLOT__##name##__
+#define CBUFFER(name, slot) static const int CB_GETBINDSLOT(name) = slot; struct alignas(16) name 
+
+#define CBSLOT_TRANSFORM		0
+
 namespace PracticeEngine::Graphics
 {
 	struct Vertex
@@ -32,8 +37,8 @@ namespace PracticeEngine::Graphics
 
 	enum class eCBType
 	{
-		None,
 		Transform,
+		None,
 		End,
 	};
 
@@ -55,12 +60,37 @@ namespace PracticeEngine::Graphics
 		End,
 	};
 
-	enum class eTextureType {
+	enum class eTextureType
+	{
 		Albedo,
 		Normal,
 		Specular,
 		Smoothness,
 		Metallic,
+		Sprite,
+		End,
+	};
+
+	enum class eRasterizerState
+	{
+		SolidBack,
+		SolidFront,
+		SolidNone,
+		Wireframe,
+		End,
+	};
+
+	enum class eBlendState
+	{
+		AlphaBlend,
+		OneOne,
+		End,
+	};
+
+	enum class eDepthStencilState
+	{
+		DepthNone,
+		LessEqual,
 		End,
 	};
 
@@ -71,5 +101,13 @@ namespace PracticeEngine::Graphics
 
 		GpuBuffer() = default;
 		virtual ~GpuBuffer() = default;
+	};
+
+	//Constant Buffer
+	CBUFFER(TransformCB, CBSLOT_TRANSFORM)
+	{
+		Math::Matrix World;
+		Math::Matrix View;
+		Math::Matrix Projection;
 	};
 }

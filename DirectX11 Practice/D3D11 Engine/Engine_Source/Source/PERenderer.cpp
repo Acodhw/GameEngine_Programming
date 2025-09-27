@@ -3,68 +3,146 @@
 #include "PEMesh.h"
 #include "PEMaterial.h"
 #include "PEResources.h"
+#include "PEEnums.h"
+#include "PEGraphics.h"
 
 
 namespace PracticeEngine::Renderer {
 	Camera* mainCamera = nullptr;
+	ConstantBuffer* constantBuffers[static_cast<UINT>(eCBType::End)] = {};
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerStates[static_cast<UINT>(eSamplerType::End)] = {};
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizerStates[static_cast<UINT>(eRasterizerState::End)] = {};
+	Microsoft::WRL::ComPtr<ID3D11BlendState> blendStates[static_cast<UINT>(eBlendState::End)] = {};
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilStates[static_cast<UINT>(eDepthStencilState::End)] = {};
 
-	ConstantBuffer constantBuffers[(UINT)eCBType::End] = {};
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerStates[(UINT)eSamplerType::End] = {};
-
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout = nullptr;
 
 	void LoadStates()
 	{
+#pragma region sampler state
 		D3D11_SAMPLER_DESC samplerDesc = {};
-		samplerDesc.Filter = D3D11_FILTER::D3D11_FILTER_ANISOTROPIC;
-		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.ComparisonFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NEVER;
+		samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 		samplerDesc.MinLOD = 0;
 		samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-		GetDevice()->CreateSamplerState(&samplerDesc, samplerStates[(UINT)eSamplerType::Anisotropic].GetAddressOf());
+		GetDevice()->CreateSamplerState(&samplerDesc,
+			samplerStates[static_cast<UINT>(eSamplerType::Anisotropic)].GetAddressOf());
 
 		ZeroMemory(&samplerDesc, sizeof(samplerDesc));
-		samplerDesc.Filter = D3D11_FILTER::D3D11_FILTER_MIN_MAG_MIP_POINT;
-		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.ComparisonFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NEVER;
+		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 		samplerDesc.MinLOD = 0;
 		samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-		GetDevice()->CreateSamplerState(&samplerDesc, samplerStates[(UINT)eSamplerType::Point].GetAddressOf());
+		GetDevice()->CreateSamplerState(&samplerDesc,
+			samplerStates[static_cast<UINT>(eSamplerType::Point)].GetAddressOf());
 
 		ZeroMemory(&samplerDesc, sizeof(samplerDesc));
-		samplerDesc.Filter = D3D11_FILTER::D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_WRAP;
-		samplerDesc.ComparisonFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NEVER;
+		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 		samplerDesc.MinLOD = 0;
 		samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-		GetDevice()->CreateSamplerState(&samplerDesc, samplerStates[(UINT)eSamplerType::Linear].GetAddressOf());
+		GetDevice()->CreateSamplerState(&samplerDesc,
+			samplerStates[static_cast<UINT>(eSamplerType::Linear)].GetAddressOf());
 
 		ZeroMemory(&samplerDesc, sizeof(samplerDesc));
-		samplerDesc.Filter = D3D11_FILTER::D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP;
-		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP;
-		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP;
-		samplerDesc.ComparisonFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NEVER;
+		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+		samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 		samplerDesc.MinLOD = 0;
 		samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-		GetDevice()->CreateSamplerState(&samplerDesc, samplerStates[(UINT)eSamplerType::PostProcess].GetAddressOf());
+		GetDevice()->CreateSamplerState(&samplerDesc,
+			samplerStates[static_cast<UINT>(eSamplerType::PostProcess)].GetAddressOf());
 
-		GetDevice()->BindSamplers((UINT)eSamplerType::Point, 1, samplerStates[(UINT)eSamplerType::Point].GetAddressOf());
-		GetDevice()->BindSamplers((UINT)eSamplerType::Linear, 1, samplerStates[(UINT)eSamplerType::Linear].GetAddressOf());
-		GetDevice()->BindSamplers((UINT)eSamplerType::Anisotropic, 1, samplerStates[(UINT)eSamplerType::Anisotropic].GetAddressOf());
-		GetDevice()->BindSamplers((UINT)eSamplerType::PostProcess, 1, samplerStates[(UINT)eSamplerType::PostProcess].GetAddressOf());
+		GetDevice()->BindSamplers(static_cast<UINT>(eSamplerType::Point), 1,
+			samplerStates[static_cast<UINT>(eSamplerType::Point)].GetAddressOf());
+		GetDevice()->BindSamplers(static_cast<UINT>(eSamplerType::Linear), 1,
+			samplerStates[static_cast<UINT>(eSamplerType::Linear)].GetAddressOf());
+		GetDevice()->BindSamplers(static_cast<UINT>(eSamplerType::Anisotropic), 1,
+			samplerStates[static_cast<UINT>(eSamplerType::Anisotropic)].GetAddressOf());
+		GetDevice()->BindSamplers(static_cast<UINT>(eSamplerType::PostProcess), 1,
+			samplerStates[static_cast<UINT>(eSamplerType::PostProcess)].GetAddressOf());
+#pragma endregion
+#pragma region rasterize state
+		D3D11_RASTERIZER_DESC rsDesc = {};
+		rsDesc.AntialiasedLineEnable = false;
+		rsDesc.CullMode = D3D11_CULL_BACK;
+		rsDesc.DepthBias = 0;
+		rsDesc.DepthBiasClamp = 0.0f;
+		rsDesc.DepthClipEnable = true;
+		rsDesc.FillMode = D3D11_FILL_SOLID;
+		rsDesc.FrontCounterClockwise = false;
+		rsDesc.MultisampleEnable = false;
+		rsDesc.ScissorEnable = false;
+		rsDesc.SlopeScaledDepthBias = 0.0f;
+		GetDevice()->CreateRasterizerState(
+			&rsDesc, rasterizerStates[static_cast<UINT>(eRasterizerState::SolidBack)].GetAddressOf());
+
+		rsDesc.FillMode = D3D11_FILL_SOLID;
+		rsDesc.CullMode = D3D11_CULL_FRONT;
+		GetDevice()->CreateRasterizerState(
+			&rsDesc, rasterizerStates[static_cast<UINT>(eRasterizerState::SolidFront)].GetAddressOf());
+
+		rsDesc.FillMode = D3D11_FILL_SOLID;
+		rsDesc.CullMode = D3D11_CULL_NONE;
+		GetDevice()->CreateRasterizerState(
+			&rsDesc, rasterizerStates[static_cast<UINT>(eRasterizerState::SolidNone)].GetAddressOf());
+
+		rsDesc.FillMode = D3D11_FILL_WIREFRAME;
+		rsDesc.CullMode = D3D11_CULL_NONE;
+		GetDevice()->CreateRasterizerState(
+			&rsDesc, rasterizerStates[static_cast<UINT>(eRasterizerState::Wireframe)].GetAddressOf());
+#pragma endregion
+#pragma region blend state
+		D3D11_BLEND_DESC bsDesc = {};
+		bsDesc.AlphaToCoverageEnable = false;
+		bsDesc.IndependentBlendEnable = false;
+		bsDesc.RenderTarget[0].BlendEnable = true;
+		bsDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		bsDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		bsDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		bsDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+		bsDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		bsDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		bsDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		GetDevice()->CreateBlendState(&bsDesc, blendStates[static_cast<UINT>(eBlendState::AlphaBlend)].GetAddressOf());
+
+		bsDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+		bsDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+		GetDevice()->CreateBlendState(&bsDesc, blendStates[static_cast<UINT>(eBlendState::OneOne)].GetAddressOf());
+#pragma endregion
+#pragma region depthstencil state
+		D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+		dsDesc.DepthEnable = true;
+		dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+		dsDesc.StencilEnable = false;
+		GetDevice()->CreateDepthStencilState(
+			&dsDesc, depthStencilStates[static_cast<UINT>(eDepthStencilState::LessEqual)].GetAddressOf());
+
+		dsDesc.DepthEnable = false;
+		dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+		dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+		dsDesc.StencilEnable = false;
+		GetDevice()->CreateDepthStencilState(
+			&dsDesc, depthStencilStates[static_cast<UINT>(eDepthStencilState::DepthNone)].GetAddressOf());
+#pragma endregion
 	}
 
 	void LoadTriangleMesh()
 	{
-		Mesh* mesh = new Mesh();
-		std::vector<Graphics::Vertex> vertexes = {};
+		auto mesh = new Mesh();
+
+		std::vector<Vertex> vertexes = {};
 		std::vector<UINT> indices = {};
 
 		vertexes.resize(3);
@@ -96,20 +174,21 @@ namespace PracticeEngine::Renderer {
 		inputLayoutDesces[1].SemanticName = "COLOR";
 		inputLayoutDesces[1].SemanticIndex = 0;
 
-		Graphics::Shader* triangleShader = Resources::Find<Graphics::Shader>(L"TriangleShader");
-		mesh->SetVertexBufferParams(2, inputLayoutDesces, triangleShader->GetVSBlob()->GetBufferPointer(), triangleShader->GetVSBlob()->GetBufferSize());
+		Shader* triangleShader = Resources::Find<Shader>(L"TriangleShader");
+		mesh->SetVertexBufferParams(2, inputLayoutDesces, triangleShader->GetVSBlob()->GetBufferPointer(),
+			triangleShader->GetVSBlob()->GetBufferSize());
 
 		mesh->CreateVB(vertexes);
 		mesh->CreateIB(indices);
 
-		PracticeEngine::Resources::Insert(L"TriangleMesh", mesh);
+		Resources::Insert(L"TriangleMesh", mesh);
 	}
 
 	void LoadRectMesh()
 	{
-		Mesh* mesh = new Mesh();
+		auto mesh = new Mesh();
 
-		std::vector<Graphics::Vertex> vertexes = {};
+		std::vector<Vertex> vertexes = {};
 		std::vector<UINT> indices = {};
 
 		vertexes.resize(4);
@@ -121,7 +200,6 @@ namespace PracticeEngine::Renderer {
 		vertexes[1].color = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 		vertexes[1].uv = Vector2(1.0f, 0.0f);
 
-		vertexes[2].pos = Vector3(-0.5f, -0.5f, 0.0f);
 		vertexes[2].pos = Vector3(0.5f, -0.5f, 0.0f);
 		vertexes[2].color = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
 		vertexes[2].uv = Vector2(1.0f, 1.0f);
@@ -160,13 +238,14 @@ namespace PracticeEngine::Renderer {
 		inputLayoutDesces[2].SemanticName = "TEXCOORD";
 		inputLayoutDesces[2].SemanticIndex = 0;
 
-		Graphics::Shader* spriteShader = Resources::Find<Graphics::Shader>(L"SpriteShader");
-		mesh->SetVertexBufferParams(3, inputLayoutDesces, spriteShader->GetVSBlob()->GetBufferPointer(), spriteShader->GetVSBlob()->GetBufferSize());
+		Shader* spriteShader = Resources::Find<Shader>(L"SpriteDefaultShader");
+		mesh->SetVertexBufferParams(3, inputLayoutDesces, spriteShader->GetVSBlob()->GetBufferPointer(),
+			spriteShader->GetVSBlob()->GetBufferSize());
 
 		mesh->CreateVB(vertexes);
 		mesh->CreateIB(indices);
 
-		PracticeEngine::Resources::Insert(L"RectMesh", mesh);
+		Resources::Insert(L"RectMesh", mesh);
 	}
 
 	void LoadMeshes()
@@ -175,29 +254,31 @@ namespace PracticeEngine::Renderer {
 		LoadRectMesh();
 	}
 
-	void LoadMeterails()
-	{
-		Material* triangleMaterial = new Material();
-		PracticeEngine::Resources::Insert(L"TriangleMaterial", triangleMaterial);
-
-		triangleMaterial->SetShader(PracticeEngine::Resources::Find<Graphics::Shader>(L"TriangleShader"));
-
-		Material* spriteMaterial = new Material();
-		Resources::Insert(L"SpriteMaterial", spriteMaterial);
-
-		spriteMaterial->SetShader(Resources::Find<Graphics::Shader>(L"SpriteShader"));		
-	}
-
 	void LoadShaders()
 	{
-		PracticeEngine::Resources::Load<Graphics::Shader>(L"TriangleShader", L"..\\Shader_SOURCE\\Triangle");
-		PracticeEngine::Resources::Load<Graphics::Shader>(L"SpriteShader", L"..\\Shaders_SOURCE\\Sprite");
+		Resources::Load<Shader>(L"TriangleShader", L"..\\Shader_SOURCE\\Triangle");
+		Resources::Load<Shader>(L"SpriteDefaultShader", L"..\\Shader_SOURCE\\SpriteDefault");
+		Resources::Load<Shader>(L"WireframeShader", L"..\\Shader_SOURCE\\Wireframe");
+
+	}
+
+	void LoadMaterials()
+	{
+		auto triangleMaterial = new Material();
+		triangleMaterial->SetShader(Resources::Find<Shader>(L"TriangleShader"));
+		Resources::Insert(L"TriangleMaterial", triangleMaterial);
+
+		auto spriteMaterial = new Material();
+		Texture* texture = Resources::Find<Texture>(L"Player");
+		spriteMaterial->SetAlbedoTexture(texture);
+		spriteMaterial->SetShader(Resources::Find<Shader>(L"SpriteDefaultShader"));
+		Resources::Insert(L"Sprite-Default-Material", spriteMaterial);
 	}
 
 	void LoadConstantBuffers()
 	{
-		constantBuffers[(UINT)eCBType::Transform].Create(eCBType::Transform, sizeof(Vector4));
-
+		constantBuffers[CBSLOT_TRANSFORM] = new ConstantBuffer(eCBType::Transform);
+		constantBuffers[CBSLOT_TRANSFORM]->Create(sizeof(TransformCB));
 	}
 
 	void Initialize()
@@ -205,17 +286,16 @@ namespace PracticeEngine::Renderer {
 		LoadStates();
 		LoadShaders();
 		LoadMeshes();
-		LoadMeterails();
+		LoadMaterials();
 		LoadConstantBuffers();
 	}
 
 	void Release()
 	{
-		//inputLayouts->Release();
-		//delete mesh;
-		//for (int i = 0; i < (UINT)eCBType::End; i++)
-		//{
-		//	constantBuffers[i].Release();
-		//}
+		for (UINT i = 0; i < static_cast<UINT>(eCBType::End); i++)
+		{
+			delete constantBuffers[i];
+			constantBuffers[i] = nullptr;
+		}
 	}
 }

@@ -22,7 +22,7 @@ namespace PracticeEngine::Graphics {
 			assert(NULL && "Create input layout failed!");
 	}
 
-	void InputLayout::Bind()
+	void InputLayout::Bind() const
 	{
 		if (mInputLayout)
 			GetDevice()->BindInputLayout(mInputLayout.Get());

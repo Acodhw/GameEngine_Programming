@@ -2,6 +2,7 @@
 #include "PELayer.h"
 #include "PEGameObject.h"
 #include "PECollisionManager.h"
+#include "PESceneManager.h"
 
 namespace PracticeEngine {
 	Scene::Scene() : mLayers{}
@@ -20,10 +21,8 @@ namespace PracticeEngine {
 
 	void Scene::Initialize() 
 	{
-		for (Layer* l : mLayers) {
-			if (l == nullptr) continue;
-			l->Initialize();
-		}
+		const std::wstring& sceneName = GetName();
+		SceneManager::SetActiveScene(sceneName);
 	}
 	void Scene::Update() 
 	{

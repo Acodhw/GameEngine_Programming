@@ -5,6 +5,7 @@
 #include "PEMaterial.h"
 #include "PEMesh.h"
 
+
 namespace PracticeEngine {
 	// 스프라이트(이미지)를 그리는 컴포넌트
 	class SpriteRenderer : public Component

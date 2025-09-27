@@ -1,14 +1,14 @@
 #include "PEMesh.h"
 namespace PracticeEngine {
-	Mesh::Data::Data()
-		: mTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+	Mesh::MeshData::MeshData()
+		: mTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
 		, vertices{}
 		, indices{}
 	{
 
 	}
 
-	Mesh::Data::~Data()
+	Mesh::MeshData::~MeshData()
 	{
 	}
 

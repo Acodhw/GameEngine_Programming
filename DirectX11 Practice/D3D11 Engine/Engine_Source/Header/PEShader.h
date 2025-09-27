@@ -1,6 +1,8 @@
 #pragma once
 #include "PEResource.h"
 #include "PEGraphicsDevice_DX11.h"
+#include "PERenderer.h"
+#include "PEShader.h"
 
 namespace PracticeEngine::Graphics {
 	class Shader : public Resource
@@ -18,9 +20,25 @@ namespace PracticeEngine::Graphics {
 
 		void Bind();
 
-		Microsoft::WRL::ComPtr<ID3DBlob> GetVSBlob() { return mVSBlob; }
+		[[nodiscard]] Microsoft::WRL::ComPtr<ID3DBlob> GetVSBlob() const { return mVSBlob; }
+		[[nodiscard]] Microsoft::WRL::ComPtr<ID3DBlob> GetHSBlob() const { return mHSBlob; }
+		[[nodiscard]] Microsoft::WRL::ComPtr<ID3DBlob> GetDSBlob() const { return mDSBlob; }
+		[[nodiscard]] Microsoft::WRL::ComPtr<ID3DBlob> GetGSBlob() const { return mGSBlob; }
+		[[nodiscard]] Microsoft::WRL::ComPtr<ID3DBlob> GetPSBlob() const { return mPSBlob; }
+
+		[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11VertexShader> GetVS() const { return mVS; }
+		[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11HullShader> GetHS() const { return mHS; }
+		[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11DomainShader> GetDS() const { return mDS; }
+		[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11GeometryShader> GetGS() const { return mGS; }
+		[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11PixelShader> GetPS() const { return mPS; }
+
+		[[noreturn]] void SetRasterizerState(const eRasterizerState state) { mRasterizerState = state; }
+		[[noreturn]] void SetBlendState(const eBlendState state) { mBlendState = state; }
+		[[noreturn]] void SetDepthStencilState(const eDepthStencilState state) { mDepthStencilState = state; }
 
 	private:
+		static bool bWireframe;
+
 		Microsoft::WRL::ComPtr<ID3DBlob> mVSBlob;
 		Microsoft::WRL::ComPtr<ID3DBlob> mHSBlob;
 		Microsoft::WRL::ComPtr<ID3DBlob> mDSBlob;
@@ -32,6 +50,10 @@ namespace PracticeEngine::Graphics {
 		Microsoft::WRL::ComPtr<ID3D11DomainShader> mDS;
 		Microsoft::WRL::ComPtr<ID3D11GeometryShader> mGS;
 		Microsoft::WRL::ComPtr<ID3D11PixelShader> mPS;
+
+		eRasterizerState mRasterizerState;
+		eBlendState mBlendState;
+		eDepthStencilState mDepthStencilState;
 	};
 }
 

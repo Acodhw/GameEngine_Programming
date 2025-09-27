@@ -174,27 +174,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     UpdateWindow(hWnd);          // 윈도우 창 업데이트
 
     application.Initialize(hWnd, width, height);
-    //PracticeEngine::Scene* activeScene = PracticeEngine::SceneManager::GetActiveScene();
-    //std::wstring name = activeScene->GetName();
-    //if (name == L"ToolScene")
-    //{
-    //    ShowWindow(ToolHwnd, nCmdShow);
-    //    UpdateWindow(ToolHwnd);
-
-    //    //Tile 윈도우 크기 조정
-    //    PracticeEngine::Graphics::Texture* texture
-    //        = PracticeEngine::Resources::Find<PracticeEngine::Graphics::Texture>(L"TL");
-
-    //    RECT rect = { 0, 0, texture->width, texture->height };
-    //    AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
-
-    //    UINT toolWidth = rect.right - rect.left;
-    //    UINT toolHeight = rect.bottom - rect.top + texture->height;
-
-    //    SetWindowPos(ToolHwnd, nullptr, width, 0, toolWidth, toolHeight, 0);
-    //    ShowWindow(ToolHwnd, true);
-    //    UpdateWindow(ToolHwnd);
-    //}
     return TRUE;
 }
 

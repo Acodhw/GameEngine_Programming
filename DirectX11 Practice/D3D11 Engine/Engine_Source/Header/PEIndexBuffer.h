@@ -6,7 +6,7 @@ namespace PracticeEngine::Graphics {
     {
 	public:
 		IndexBuffer();
-		~IndexBuffer();
+		virtual ~IndexBuffer();
 
 		bool Create(const std::vector<UINT>& indices);
 		void Bind() const;

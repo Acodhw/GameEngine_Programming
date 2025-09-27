@@ -8,10 +8,10 @@ namespace PracticeEngine {
 	class Mesh : public Resource
 	{
 	public:
-		struct Data
+		struct MeshData
 		{
-			Data();
-			~Data();
+			MeshData();
+			~MeshData();
 
 			D3D11_PRIMITIVE_TOPOLOGY mTopology;
 			std::vector<Graphics::Vertex> vertices;
@@ -37,7 +37,7 @@ namespace PracticeEngine {
 		Graphics::VertexBuffer mVB;
 		Graphics::IndexBuffer mIB;
 
-		Data mData;
+		MeshData mData;
 	};
 }
 

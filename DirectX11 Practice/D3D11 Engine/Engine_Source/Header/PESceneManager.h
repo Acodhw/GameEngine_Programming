@@ -11,29 +11,18 @@ namespace PracticeEngine {
 		template <typename T> // 상속받는 씬에 대한 탬플렛
 		static Scene* CreateScene(const std::wstring& name) {
 			T* scene = new T();
+			mScene.insert(std::make_pair(name, scene));
+
 			scene->SetName(name);
 			scene->Initialize(); // 씬 초기화
-
-			mScene.insert(std::make_pair(name, scene)); // 씬을 씬 map에 넣음
 
 			return scene; // 씬 리턴
 		}
 
 		// 씬 메지녀가 가지고 있는 씬 정보를 제공합니다
-		static Scene* LoadScene(const std::wstring& name)
-		{
-			if(mActiveScene)
-				mActiveScene->OnExit();
-			std::map<std::wstring, Scene*>::iterator iter = mScene.find(name); // 씬 map에서 해당 이름 씬을 찾기
-			if (iter == mScene.end()) // 씬이 없으면
-				return nullptr; // nullptr 제공
-
-			mActiveScene = iter->second; // 현재 활성화 씬을 지금 씬으로 변경
-
-			mActiveScene->OnEnter();
-
-			return iter->second; // 찾은 씬 리턴
-		}
+		static Scene* LoadScene(const std::wstring& name);
+		
+		static bool SetActiveScene(const std::wstring& name);
 		// 현재 작동중인 씬을 가져옵니다
 		static Scene* GetActiveScene() { return mActiveScene; }
 		// 게임이 진행되는 동안 계속 실행되는 씬을 가져옵니다

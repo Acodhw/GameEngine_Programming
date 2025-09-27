@@ -5,6 +5,15 @@ namespace PracticeEngine {
 	class PlayerScript : public Script
 	{
 	public:
+		enum class eState
+		{
+			Idle,
+			Walk,
+			Sleep,
+			GiveWater,
+			Attack,
+		};
+
 		PlayerScript();
 		~PlayerScript();
 
@@ -12,8 +21,21 @@ namespace PracticeEngine {
 		void Update() override;
 		void LateUpdate() override;
 		void Render() override;
+
+		void AttackEffect();
+
+		void OnCollisionEnter(Collider* other) override;
+		void OnCollisionStay(Collider* other) override;
+		void OnCollisionExit(Collider* other) override;
+
 	private:
-		int Speed = 150;
+		void idle();
+		void move();
+		void giveWater();
+
+	private:
+		eState mState;
+		class Animator* mAnimator;
 	};
 }
 

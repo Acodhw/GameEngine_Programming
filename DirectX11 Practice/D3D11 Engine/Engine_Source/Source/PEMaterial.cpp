@@ -5,8 +5,9 @@ namespace PracticeEngine {
 	Material::Material()
 		: Resource(eResourceType::Material)
 		, mMode(Graphics::eRenderingMode::Opaque)
+		, mAlbedoTexture(nullptr)
+		, mShader(nullptr)
 	{
-
 	}
 
 	Material::~Material()
@@ -25,12 +26,11 @@ namespace PracticeEngine {
 
 	void Material::Bind()
 	{
-		//mTexture->Bind(eShaderStage::All, 0);
 		if (mShader)
 			mShader->Bind();
 
 		if (mAlbedoTexture)
-			mAlbedoTexture->Bind(Graphics::eShaderStage::PS, (UINT)Graphics::eTextureType::Albedo);
+			mAlbedoTexture->Bind(Graphics::eShaderStage::PS, static_cast<UINT>(Graphics::eTextureType::Albedo));
 	}
 
 	void Material::BindShader()
@@ -42,6 +42,6 @@ namespace PracticeEngine {
 	void Material::BindTextures()
 	{
 		if (mAlbedoTexture)
-			mAlbedoTexture->Bind(Graphics::eShaderStage::PS, (UINT)Graphics::eTextureType::Albedo);
+			mAlbedoTexture->Bind(Graphics::eShaderStage::PS, static_cast<UINT>(Graphics::eTextureType::Albedo));
 	}
 }

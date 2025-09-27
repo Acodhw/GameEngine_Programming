@@ -1,5 +1,9 @@
 #include "PEShader.h"
+#include "PEResources.h"
+#include "PERenderer.h"
+
 namespace PracticeEngine::Graphics {
+	bool Shader::bWireframe = true;
 	Shader::Shader()
 		: Resource(eResourceType::Shader)
 	{
@@ -45,7 +49,7 @@ namespace PracticeEngine::Graphics {
 		return true;
 	}
 
-	bool Shader::CreatePixelShader(const std::wstring& fileName)
+	bool Shader::CreatePixelShader(const std::wstring & fileName)
 	{
 		if (!GetDevice()->CreatePixelShader(fileName, mPSBlob.GetAddressOf(), mPS.GetAddressOf()))
 			return false;
@@ -53,8 +57,25 @@ namespace PracticeEngine::Graphics {
 		return true;
 	}
 
+
 	void Shader::Bind()
 	{
+		if (bWireframe)
+		{
+			Shader* wireframeShader = Resources::Find<Shader>(L"WireframeShader");
+			Microsoft::WRL::ComPtr<ID3D11VertexShader> wireframeShaderVS = wireframeShader->GetVS();
+			Microsoft::WRL::ComPtr<ID3D11PixelShader> wireframeShaderPS = wireframeShader->GetPS();
+			Microsoft::WRL::ComPtr<ID3D11RasterizerState> wireframeRasterizerState
+				= Renderer::rasterizerStates[static_cast<UINT>(eRasterizerState::Wireframe)];
+
+			GetDevice()->BindVS(wireframeShaderVS.Get());
+			GetDevice()->BindPS(wireframeShaderPS.Get());
+			GetDevice()->BindRasterizerState(wireframeRasterizerState.Get());
+			GetDevice()->BindBlendState(Renderer::blendStates[static_cast<UINT>(mBlendState)].Get(), nullptr, 0xffffff);
+			GetDevice()->BindDepthStencilState(Renderer::depthStencilStates[static_cast<UINT>(mDepthStencilState)].Get(), 0);
+
+			return;
+		}
 		if (mVS)
 			GetDevice()->BindVS(mVS.Get());
 		if (mPS)

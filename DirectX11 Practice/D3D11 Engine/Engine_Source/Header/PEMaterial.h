@@ -7,17 +7,16 @@ namespace PracticeEngine {
 	class Material : public Resource
 	{
 	public:
-		struct Data
+		struct Data //Texture names
 		{
-
-			std::wstring albedo; //difuuse
+			std::wstring albedo; //diffuse
 		};
 
 		Material();
 		virtual ~Material();
 
-		virtual HRESULT Save(const std::wstring& path) override;
-		virtual HRESULT Load(const std::wstring& path) override;
+		HRESULT Save(const std::wstring& path) override;
+		HRESULT Load(const std::wstring& path) override;
 
 		void Bind();
 		void BindShader();
@@ -25,9 +24,15 @@ namespace PracticeEngine {
 
 		void SetShader(Graphics::Shader* shader) { mShader = shader; }
 
+		void SetAlbedoTexture(Graphics::Texture* texture)
+		{
+			mAlbedoTexture = texture;
+			mData.albedo = texture->GetName();
+		}
+
 	private:
 		Graphics::eRenderingMode mMode;
-		Material::Data mData;
+		Data mData;
 
 		Graphics::Texture* mAlbedoTexture;
 		Graphics::Shader* mShader;

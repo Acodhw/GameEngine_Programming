@@ -8,9 +8,17 @@ namespace PracticeEngine {
     class Camera : public Component
     {
 	public:
-		// 카메라 위치에 따른 위치를 지정합니다
-		Vector2 CaluatePosition(Vector2 pos) const { return pos - mDistance; };
-		Vector2 CaluateTilePosition(Vector2 pos) const { return pos + mDistance; };
+		enum class eProjectionType
+		{
+			Perspective,
+			Orthographic
+		};
+
+		static Matrix GetGpuViewMatrix() { return ViewMatrix; }
+		static Matrix GetGpuProjectionMatrix() { return ProjectionMatrix; }
+		static void SetGpuViewMatrix(Matrix matrix) { ViewMatrix = matrix; }
+		static void SetGpuProjectionMatrix(Matrix matrix) { ProjectionMatrix = matrix; }
+
 		Camera();
 		~Camera();
 
@@ -19,13 +27,22 @@ namespace PracticeEngine {
 		void LateUpdate() override;
 		void Render() override;
 		// 카메라의 타겟을 정합니다
-		void SetTarger(GameObject* g) { mTarget = g; }	
-		const Vector2& Resolution = mResolution; // 카메라의 해상도
-	private:
-		Vector2 mDistance;
-		Vector2 mResolution;
-		Vector2 mLookPosition;
+		void CreateViewMatrix();
+		void CreateProjectionMatrix(eProjectionType type);
 
-		GameObject* mTarget;
+		void SetProjectionType(eProjectionType type) { mProjectionType = type; }
+		void SetSize(float size) { mSize = size; }
+	private:
+		static Matrix ViewMatrix;
+		static Matrix ProjectionMatrix;
+
+		eProjectionType mProjectionType;
+
+		Matrix mViewMatrix;
+		Matrix mProjectionMatrix;
+		float mAspectRatio;
+		float mNear;
+		float mFar;
+		float mSize; //
     };
 }

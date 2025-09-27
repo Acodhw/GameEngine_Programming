@@ -10,8 +10,12 @@ using namespace PracticeEngine::Graphics;
 namespace PracticeEngine::Renderer {
 	// 렌더 관련한 기능을 담음
 	extern Camera* mainCamera; // 씬의 메인카메라를 지정합니다
+	extern ConstantBuffer* constantBuffers[static_cast<UINT>(eCBType::End)];
 
-	extern Graphics::ConstantBuffer constantBuffers[(UINT)eCBType::End];
+	extern Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerStates[static_cast<UINT>(eSamplerType::End)];
+	extern Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizerStates[static_cast<UINT>(eRasterizerState::End)];
+	extern Microsoft::WRL::ComPtr<ID3D11BlendState> blendStates[static_cast<UINT>(eBlendState::End)];
+	extern Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilStates[static_cast<UINT>(eDepthStencilState::End)];
 
 	void Initialize();
 	void Release();

@@ -27,6 +27,6 @@ namespace PracticeEngine {
 
     void CircleCollider2D::Render() {
 		Transform* tr = GetOwner()->GetComponent<Transform>();
-		Vector2 pos = tr->GetPosition();
+		Vector3 pos = tr->GetPosition();
     }
 }
