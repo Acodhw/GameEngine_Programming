@@ -26,10 +26,12 @@ namespace PracticeEngine {
 		void Update() override;
 		void LateUpdate() override;
 		void Render() override;
-		// 카메라의 타겟을 정합니다
+
 		void CreateViewMatrix();
 		void CreateProjectionMatrix(eProjectionType type);
 
+		const Matrix& GetViewMatrix() { return mViewMatrix; }
+		const Matrix& GetProjectionMatrix() { return mProjectionMatrix; }
 		void SetProjectionType(eProjectionType type) { mProjectionType = type; }
 		void SetSize(float size) { mSize = size; }
 	private:

@@ -3,9 +3,13 @@
 #include "PERenderer.h"
 
 namespace PracticeEngine::Graphics {
-	bool Shader::bWireframe = true;
+	bool Shader::bWireframe = false;
+
 	Shader::Shader()
 		: Resource(eResourceType::Shader)
+		, mRasterizerState(eRasterizerState::SolidBack)
+		, mBlendState(eBlendState::AlphaBlend)
+		, mDepthStencilState(eDepthStencilState::LessEqual)
 	{
 	}
 
@@ -17,6 +21,7 @@ namespace PracticeEngine::Graphics {
 	{
 		return E_NOTIMPL;
 	}
+
 	HRESULT Shader::Load(const std::wstring& path)
 	{
 		size_t fineNameBeginOffset = path.rfind(L"\\") + 1;
@@ -49,14 +54,13 @@ namespace PracticeEngine::Graphics {
 		return true;
 	}
 
-	bool Shader::CreatePixelShader(const std::wstring & fileName)
+	bool Shader::CreatePixelShader(const std::wstring& fileName)
 	{
 		if (!GetDevice()->CreatePixelShader(fileName, mPSBlob.GetAddressOf(), mPS.GetAddressOf()))
 			return false;
 
 		return true;
 	}
-
 
 	void Shader::Bind()
 	{
@@ -76,9 +80,14 @@ namespace PracticeEngine::Graphics {
 
 			return;
 		}
+
 		if (mVS)
 			GetDevice()->BindVS(mVS.Get());
 		if (mPS)
 			GetDevice()->BindPS(mPS.Get());
+
+		GetDevice()->BindRasterizerState(Renderer::rasterizerStates[static_cast<UINT>(mRasterizerState)].Get());
+		GetDevice()->BindBlendState(Renderer::blendStates[static_cast<UINT>(mBlendState)].Get(), nullptr, 0xffffff);
+		GetDevice()->BindDepthStencilState(Renderer::depthStencilStates[static_cast<UINT>(mDepthStencilState)].Get(), 0);
 	}
 }

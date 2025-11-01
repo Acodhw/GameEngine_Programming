@@ -15,7 +15,8 @@ namespace PracticeEngine
 		'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
 		'Z', 'X', 'C', 'V', 'B', 'N', 'M',
 		VK_LEFT, VK_RIGHT, VK_DOWN, VK_UP,
-		VK_LBUTTON, VK_RBUTTON, VK_MBUTTON
+		VK_LBUTTON, VK_RBUTTON, VK_MBUTTON,
+		VK_LCONTROL,
 	};
 
 	void Input::Initailze()
@@ -94,10 +95,10 @@ namespace PracticeEngine
 	{
 		POINT mousePos = { };
 		GetCursorPos(&mousePos);
-		ScreenToClient(application.GetHWND(), &mousePos);
+		ScreenToClient(application.GetWindow().GetHwnd(), &mousePos);
 
-		UINT width = application.GetResolution().x;
-		UINT height = application.GetResolution().y;
+		UINT width = application.GetWindow().GetWidth();
+		UINT height = application.GetWindow().GetHeight();
 
 		mMousePosition.x = -1.0f;
 		mMousePosition.y = -1.0f;

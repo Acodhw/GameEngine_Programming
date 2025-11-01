@@ -76,8 +76,6 @@ namespace PracticeEngine {
 		{
 			Resources::Load<Graphics::Texture>(L"Player", L"..\\Resources\\CloudOcean.png");
 		
-			Renderer::Initialize();
-
 			SceneManager::CreateScene<TitleScene>(L"TitleScene");
 			SceneManager::CreateScene<PlayScene>(L"PlayScene");
 		}

@@ -23,7 +23,6 @@
 
 namespace PracticeEngine {
     PlayScene::PlayScene()
-        : mPlayer(nullptr)
     {
     }
     PlayScene::~PlayScene()
@@ -36,18 +35,21 @@ namespace PracticeEngine {
 
         // main camera
         GameObject* camera = Object::Instantiate<GameObject>(eLayerType::None, Vector3(0.0f, 0.0f, -10.0f));
+
         Camera* cameraComp = camera->AddComponent<Camera>();
-        cameraComp->SetProjectionType(Camera::eProjectionType::Orthographic);
+        cameraComp->SetProjectionType(Camera::eProjectionType::Perspective);
         cameraComp->SetSize(200.0f);
 
         CameraScript* cameraScript = camera->AddComponent<CameraScript>();
         Renderer::mainCamera = cameraComp;
 
-        mPlayer = Object::Instantiate<Player>(eLayerType::Player);
-        Object::DontDestroyOnLoad(mPlayer);
+        GameObject* player = Object::Instantiate<Player>(eLayerType::Player);
+        Object::DontDestroyOnLoad(player);
 
-        SpriteRenderer* sr = mPlayer->AddComponent<SpriteRenderer>();
-        sr->SetSprite(Resources::Find<Graphics::Texture>(L"Player"));
+        SpriteRenderer* sr = player->AddComponent<SpriteRenderer>();
+        sr->SetSprite(Resources::Find<Texture>(L"Player"));
+
+        Renderer::selectedObject = player;
     }
 
     void PlayScene::Update()

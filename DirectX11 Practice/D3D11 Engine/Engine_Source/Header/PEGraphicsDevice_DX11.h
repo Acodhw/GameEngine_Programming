@@ -31,11 +31,15 @@ namespace PracticeEngine::Graphics {
 			ID3D11Buffer** ppBuffer);
 		bool CreateShaderResourceView(ID3D11Resource* pResource, const D3D11_SHADER_RESOURCE_VIEW_DESC* pDesc,
 			ID3D11ShaderResourceView** ppSRView);
+		bool CreateUnorderedAccessView(ID3D11Resource* pResource, const D3D11_UNORDERED_ACCESS_VIEW_DESC* pDesc,
+			ID3D11UnorderedAccessView** ppUAView);
 		bool CreateRasterizerState(const D3D11_RASTERIZER_DESC* pRasterizerDesc,
 			ID3D11RasterizerState** ppRasterizerState);
 		bool CreateBlendState(const D3D11_BLEND_DESC* pBlendState, ID3D11BlendState** ppBlendState);
 		bool CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC* pDepthStencilDesc,
 			ID3D11DepthStencilState** ppDepthStencilState);
+		bool Resize(D3D11_VIEWPORT viewport);
+
 		/// <summary>
 		/// context swtich
 		/// </summary>
@@ -59,7 +63,7 @@ namespace PracticeEngine::Graphics {
 		void BindRenderTargets(UINT NumViews = 1, ID3D11RenderTargetView* const* ppRenderTargetViews = nullptr,
 			ID3D11DepthStencilView* pDepthStencilView = nullptr);
 		void BindDefaultRenderTarget();
-
+		void CopyResource(ID3D11Resource* pDstResource, ID3D11Resource* pSrcResource);
 		void ClearRenderTargetView();
 		void ClearDepthStencilView();
 
@@ -68,13 +72,15 @@ namespace PracticeEngine::Graphics {
 		void DrawIndexed(UINT indexCount, UINT startIndexLocation, INT baseVertexLocation) const;
 		void Present() const;
 
-		[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11Device> GetID3D11Device() { return mDevice; }
+		Microsoft::WRL::ComPtr<ID3D11Device> GetID3D11Device() { return mDevice; }
+		Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetID3D11DeviceContext() { return mContext; }
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> GetFrameBuffer() { return mFrameBuffer; }
 
 	private:
 		Microsoft::WRL::ComPtr<ID3D11Device> mDevice;
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> mContext;
-		Microsoft::WRL::ComPtr<ID3D11Texture2D> mRenderTarget;
-		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> mRenderTargetView;
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> mFrameBuffer;
+		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> mFrameBufferView;
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> mDepthStencil;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> mDepthStencilView;
 		Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain;

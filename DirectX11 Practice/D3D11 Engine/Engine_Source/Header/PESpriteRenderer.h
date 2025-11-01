@@ -12,7 +12,7 @@ namespace PracticeEngine {
 	{
 	public:
 		SpriteRenderer();
-		~SpriteRenderer();
+		virtual ~SpriteRenderer();
 
 		void Initialize() override;
 		void Update() override;

@@ -3,18 +3,11 @@
 
 #include "framework.h"
 #include "EnginePractice.h"
-
-//#pragma comment(lib, "..\\x64\\Debug\\PracticeEngine_Window.lib")
 #include "..\\PracticeEngine_SOURCE\\PEApplication.h"
 #include "..\\PracticeEngine_Window\\PELoadScene.h"
-#include "..\\PracticeEngine_SOURCE\\PESceneManager.h"
-#include "..\\PracticeEngine_SOURCE\\PEResources.h"
-#include "..\\PracticeEngine_SOURCE\\PETexture.h"
+#include "guiEditorApplication.h"
 
 PracticeEngine::Application application;
-
-ULONG_PTR gpToken;
-Gdiplus::GdiplusStartupInput gpsi;
 
 #define MAX_LOADSTRING 100
 
@@ -53,27 +46,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,             // 프로그램의 �
 
     // 애플리케이션 초기화를 수행합니다:
     if (!InitInstance (hInstance, nCmdShow)) // 창 생성이 성공적으로 수행되었는지 확인합니다
-    {
         return FALSE;
-    }
+  
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_ENGINEPRACTICE));
 
     MSG msg;
 
-    //GetMessage
-    // 프로세스에서 발생한 메세지를 메세지 큐에서 가져오는 함수
-    // 메세지큐 == null => 메세지 가져오지 않음
-    // 메세지큐가 없으면 멈춤
-
-    // PeekMessage : 
-    // 메세지 큐의 메세지 유뮤와 관계없이 함수 리턴
-    // 리턴 == true : message 있음, 리턴 == false : message 없음 알려줌
-    // 메세지큐 신경 없이 항상 작동
-
-    PracticeEngine::LoadScenes();
-
-    while (true) // 메세지 큐의 여부와 상관없이 작동하는 루프
+    while (application.IsRunning()) // 메세지 큐의 여부와 상관없이 작동하는 루프
     {
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 
@@ -89,11 +69,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,             // 프로그램의 �
         else {
            
             application.Run();
+            GUI::EditorApplication::Run();
+            application.Present();
             // 메세지가 없을 경우 여기서 처리
             // 게임 로직 함수 처리
-        }
-
-        
+        }  
     }
 
     // 기본 메시지 루프입니다 -PeekMessage롷 병합
@@ -105,6 +85,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,             // 프로그램의 �
             DispatchMessage(&msg);      // 메세지를 적용
         }
     }*/
+
+    GUI::EditorApplication::Release();
     application.Release();
     return (int) msg.wParam;
 }
@@ -155,7 +137,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     // 창 생성 함수(윈도우 스타일, 타이틀 이름, 윈도우 형태, 윈도우 생성 위치x, y, 가로세로 크기x, y, 부모 윈도우, 메뉴 정보, 창 인스턴스, 좌표 저장하는 파라미터)
     // 반환 => 핸들 반환(윈도우가 가지고 있는 주소의 위치)
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, 0, width, height, nullptr, nullptr, hInstance, nullptr);
+        CW_USEDEFAULT, CW_USEDEFAULT, width, height, nullptr, nullptr, hInstance, nullptr);
 
     //HWND ToolHwnd = CreateWindowW(L"TILEMAP", L"TileMap", WS_OVERLAPPEDWINDOW,
     //    CW_USEDEFAULT, 0, 480, 960, nullptr, nullptr, hInstance, nullptr);
@@ -170,12 +152,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         return FALSE;
     }
 
-    ShowWindow(hWnd, nCmdShow);  // 윈도우 보이기
-    UpdateWindow(hWnd);          // 윈도우 창 업데이트
-
     application.Initialize(hWnd, width, height);
+    PracticeEngine::LoadScenes();
+    GUI::EditorApplication::Initialize();
     return TRUE;
 }
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 //
 //  함수: WndProc(HWND, UINT, WPARAM, LPARAM)
@@ -189,6 +172,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+        return true;
+
     switch (message)
     {
     case WM_COMMAND:
@@ -208,6 +194,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     }
+    case WM_SIZE:
+    {
+        RECT rect = { 0, 0, 1600, 900 }; // 기본값 설정
+        GetWindowRect(hWnd, &rect); // 현재 윈도우의 좌표와 크기를 가져옴
+
+        int x = rect.left;
+        int y = rect.top;
+        int width = rect.right - rect.left;
+        int height = rect.bottom - rect.top;
+
+        application.GetWindow().SetWindowResize(LOWORD(lParam), HIWORD(lParam));
+    }
+    break;
+    case WM_MOUSEMOVE:
+    {
+        application.GetWindow().SetCursorPos(wParam, lParam);
+        GUI::EditorApplication::SetCursorPos(wParam, lParam);
+    }
+    break;
     case WM_PAINT:
     {
         PAINTSTRUCT ps;
@@ -218,6 +223,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         EndPaint(hWnd, &ps);
         break;
     }
+    case WM_DPICHANGED:
+        if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DpiEnableScaleViewports)
+        {
+            //const int dpi = HIWORD(wParam);
+            //printf("WM_DPICHANGED to %d (%.0f%%)\n", dpi, (float)dpi / 96.0f * 100.0f);
+            const RECT* suggested_rect = (RECT*)lParam;
+            ::SetWindowPos(hWnd, NULL, suggested_rect->left, suggested_rect->top
+                , suggested_rect->right - suggested_rect->left, suggested_rect->bottom - suggested_rect->top, SWP_NOZORDER | SWP_NOACTIVATE);
+        }
+        break;
     case WM_DESTROY:
     {
         PostQuitMessage(0);

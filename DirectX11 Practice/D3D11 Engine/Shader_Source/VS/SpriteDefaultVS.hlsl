@@ -24,6 +24,7 @@ VSOutput main(VSInput input)
 
     output.pos = projPos;
     output.color = input.color;
+    output.uv = input.uv;
 
     return output;
 }

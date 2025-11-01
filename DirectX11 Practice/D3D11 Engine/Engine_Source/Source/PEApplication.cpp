@@ -7,64 +7,112 @@
 #include "PECollisionManager.h"
 #include "PEUIManager.h"
 #include "PERenderer.h"
+#include "PEApplicationEvent.h"
+#include "PEMouseEvent.h"
 
 #define MAX_LOADSTRING 100
 
 namespace PracticeEngine {
 
 	Application::Application()
-		: mHwmd(nullptr)
-		, mHdc(nullptr)
-		, mWidth(0)
-		, mHeight(0)
-		, mBackHDC(NULL)
-		, mBackBuffer(NULL)
-		, mbLoaded(false)
-		, title(new wchar_t[MAX_LOADSTRING])
-	{
+		: mbLoaded(false)
+		, mbRunning(false)
 
+	{
+		mWindow.SetEventCallBack(YA_BIND_EVENT_FN(Application::OnEvent));
 	}
 
 	Application::~Application()
 	{
-		delete[] title;
 	}
 
-	void Application::Initialize(HWND hwnd, UINT width, UINT height)
+	void Application::Initialize(HWND hwnd, int width, int height)
 	{
+		mWindow.SetHwnd(hwnd);
 		AdjustWindowRect(hwnd, width, height);
 		InitializeEtc();
 
-		mGraphicDevice = std::make_unique<Graphics::GraphicsDevice_DX11>();
-		//Renderer::Initialize();
+		mGraphicDevice = std::make_unique<GraphicsDevice_DX11>();
 		mGraphicDevice->Initialize();
+		Renderer::Initialize();
 
 		Fmod::Initialize();
 		CollisionManager::Initialize();
 		UIManager::Initialize();
 		SceneManager::Initialize();
+
+		mbRunning = true;
 	}
 
-	void Application::AdjustWindowRect(HWND hwnd, UINT width, UINT height)
+	void Application::InitializeWindow(HWND hwnd)
 	{
-		mHwmd = hwnd;
-		mHdc = GetDC(hwnd);
+		SetWindowPos(hwnd, nullptr, mWindow.GetXPos(), mWindow.GetYPos()
+			, mWindow.GetWindowWidth(), mWindow.GetWindowHeight(), 0);
+		ShowWindow(hwnd, SW_SHOWDEFAULT);
+	}
 
-		RECT rect = { 0, 0, (LONG)width, (LONG)height };
+	void Application::AdjustWindowRect(HWND hwnd, int width, int height)
+	{
+		RECT rect = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
 		::AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 
-		mWidth = rect.right - rect.left;
-		mHeight = rect.bottom - rect.top;
+		RECT winRect;
+		::GetWindowRect(mWindow.GetHwnd(), &winRect);
 
-		SetWindowPos(hwnd, nullptr, 0, 0, mWidth, mHeight, 0);
-		ShowWindow(hwnd, true);
-		GetWindowText(mHwmd, title, MAX_LOADSTRING);
+		//window position
+		mWindow.SetPos(winRect.left, winRect.top);
+
+		// window size
+		mWindow.SetWindowWidth(rect.right - rect.left);
+		mWindow.SetWindowHeight(rect.bottom - rect.top);
+
+		//client size
+		mWindow.SetWidth(width);
+		mWindow.SetHeight(height);
+
+		InitializeWindow(hwnd);
+	}
+
+	void Application::ReszieGraphicDevice(UINT width, UINT height)
+	{
+		if (mGraphicDevice == nullptr)
+			return;
+
+		D3D11_VIEWPORT viewport = {};
+		viewport.TopLeftX = 0.0f;
+		viewport.TopLeftY = 0.0f;
+		viewport.Width = static_cast<float>(width);
+		viewport.Height = static_cast<float>(height);
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+
+		mWindow.SetWidth(viewport.Width);
+		mWindow.SetHeight(viewport.Height);
+
+		mGraphicDevice->Resize(viewport);
+		Renderer::FrameBuffer->Resize(viewport.Width, viewport.Height);
 	}
 
 	void Application::InitializeEtc()
 	{
 		Input::Initailze();
 		Time::Initailze();
+	}
+
+	void Application::OnEvent(Event& e)
+	{
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& e) -> bool
+			{
+				ReszieGraphicDevice(e.GetWidth(), e.GetHeight());
+				return true;
+			});
+
+		dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent& e) -> bool
+			{
+				// Todo : MouseMovedEvent
+				return true;
+			});
 	}
 
 	void Application::Run()
@@ -78,34 +126,50 @@ namespace PracticeEngine {
 
 		Destroy();
 	}
+
+	void Application::Close()
+	{
+		mbRunning = false;
+	}
+
 	void Application::Update()
 	{
+		Input::Update();
 		Time::Update();
-		Input::Update();	
 
 		CollisionManager::Update();
 		UIManager::Update();
 		SceneManager::Update();
 	}
+
 	void Application::LateUpdate()
 	{
 		CollisionManager::LateUpdate();
 		UIManager::LateUpdate();
 		SceneManager::LateUpdate();
 	}
+
 	void Application::Render()
 	{
-		Graphics::GetDevice()->ClearRenderTargetView();
-		Graphics::GetDevice()->ClearDepthStencilView();
-		Graphics::GetDevice()->BindViewPort();
-		Graphics::GetDevice()->BindDefaultRenderTarget();
+		GetDevice()->ClearRenderTargetView();
+		GetDevice()->ClearDepthStencilView();
+		GetDevice()->BindViewPort();
+		GetDevice()->BindDefaultRenderTarget();
 
 		CollisionManager::Render();
 		UIManager::Render();
 		SceneManager::Render();
-		infoTitle();
 
-		Graphics::GetDevice()->Present();
+		//copy back buffer
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> src = GetDevice()->GetFrameBuffer();
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> dst = Renderer::FrameBuffer->GetAttachmentTexture(0)->GetTexture();
+
+		GetDevice()->CopyResource(dst.Get(), src.Get());
+	}
+
+	void Application::Present()
+	{
+		GetDevice()->Present();
 	}
 
 	void Application::Destroy()
@@ -120,15 +184,5 @@ namespace PracticeEngine {
 		Resources::Release();
 
 		Renderer::Release();
-	}
-
-	void Application::infoTitle() {
-		float fps = 1.0f / Time::DeltaTime;
-
-		wchar_t str[MAX_LOADSTRING] = L"";
-		swprintf(str, MAX_LOADSTRING, L"%ws \tFPS : %d", title, (int)fps);
-		int len = wcsnlen_s(str, MAX_LOADSTRING);
-
-		SetWindowText(mHwmd, str);
 	}
 }

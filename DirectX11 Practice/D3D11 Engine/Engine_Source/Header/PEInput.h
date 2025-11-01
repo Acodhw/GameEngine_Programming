@@ -18,6 +18,7 @@ namespace PracticeEngine
 		Z, X, C, V, B, N, M,
 		Left, Right, Down, Up,
 		LButton, RButton, MButton,
+		Leftcontrol,
 		End,
 	}; // 키 코드를 열거형 저장
 	// 게임의 입력 상태를 지정하는 클래스

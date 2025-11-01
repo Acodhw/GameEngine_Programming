@@ -5,16 +5,20 @@
 #include "PEResources.h"
 #include "PEEnums.h"
 #include "PEGraphics.h"
+#include "PERenderTarget.h"
+#include "PEApplication.h"
 
+extern PracticeEngine::Application application;
 
 namespace PracticeEngine::Renderer {
 	Camera* mainCamera = nullptr;
+	GameObject* selectedObject = nullptr;
 	ConstantBuffer* constantBuffers[static_cast<UINT>(eCBType::End)] = {};
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerStates[static_cast<UINT>(eSamplerType::End)] = {};
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizerStates[static_cast<UINT>(eRasterizerState::End)] = {};
 	Microsoft::WRL::ComPtr<ID3D11BlendState> blendStates[static_cast<UINT>(eBlendState::End)] = {};
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStencilStates[static_cast<UINT>(eDepthStencilState::End)] = {};
-
+	RenderTarget* FrameBuffer = nullptr;
 
 	void LoadStates()
 	{
@@ -256,9 +260,9 @@ namespace PracticeEngine::Renderer {
 
 	void LoadShaders()
 	{
-		Resources::Load<Shader>(L"TriangleShader", L"..\\Shader_SOURCE\\Triangle");
-		Resources::Load<Shader>(L"SpriteDefaultShader", L"..\\Shader_SOURCE\\SpriteDefault");
-		Resources::Load<Shader>(L"WireframeShader", L"..\\Shader_SOURCE\\Wireframe");
+		Resources::Load<Shader>(L"TriangleShader", L"..\\Shaders_SOURCE\\Triangle");
+		Resources::Load<Shader>(L"SpriteDefaultShader", L"..\\Shaders_SOURCE\\SpriteDefault");
+		Resources::Load<Shader>(L"WireframeShader", L"..\\Shaders_SOURCE\\Wireframe");
 
 	}
 
@@ -269,8 +273,6 @@ namespace PracticeEngine::Renderer {
 		Resources::Insert(L"TriangleMaterial", triangleMaterial);
 
 		auto spriteMaterial = new Material();
-		Texture* texture = Resources::Find<Texture>(L"Player");
-		spriteMaterial->SetAlbedoTexture(texture);
 		spriteMaterial->SetShader(Resources::Find<Shader>(L"SpriteDefaultShader"));
 		Resources::Insert(L"Sprite-Default-Material", spriteMaterial);
 	}
@@ -281,6 +283,16 @@ namespace PracticeEngine::Renderer {
 		constantBuffers[CBSLOT_TRANSFORM]->Create(sizeof(TransformCB));
 	}
 
+	void LoadFrameBuffer()
+	{
+		RenderTargetSpecification spec;
+		spec.Attachments = { eRenderTragetFormat::RGBA8, eRenderTragetFormat::Depth };
+		spec.Width = application.GetWindow().GetWidth();
+		spec.Height = application.GetWindow().GetHeight();
+
+		FrameBuffer = RenderTarget::Create(spec);
+	}
+
 	void Initialize()
 	{
 		LoadStates();
@@ -288,6 +300,7 @@ namespace PracticeEngine::Renderer {
 		LoadMeshes();
 		LoadMaterials();
 		LoadConstantBuffers();
+		LoadFrameBuffer();
 	}
 
 	void Release()
